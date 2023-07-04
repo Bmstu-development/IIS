@@ -1,12 +1,30 @@
 <!DOCTYPE html>
 <html>
+<style>
+    .main-footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+    }
+</style>
 <head>
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
 <main>
-    {% block content %}
+    {% block body %}
+    <div>
+        <div>
+            {% block content_header %}{% endblock %}
+            {% block content %}{% endblock %}
+        </div>
+        <footer class="main-footer">
+            {% include 'footer.html' %}
+        </footer>
+    </div>
     {% endblock %}
 </main>
 </body>
