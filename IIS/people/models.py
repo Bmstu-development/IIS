@@ -17,8 +17,21 @@ class Person(models.Model):
     events = models.ManyToManyField('events.Event', verbose_name='Курс', related_name='person_event_match', blank=True,
                                     default=list())
 
+    class Meta:
+        ordering = '-surname', '-name', '-patronymic',
+        verbose_name = 'Человек'
+        verbose_name_plural = 'Люди'
+
     def __str__(self):
         return f'{self.surname} {self.name} {self.patronymic}'
+
+    def get_fields(self):
+        dct = dict()
+
+        fields = ['surname', 'name', 'patronymic', 'organisation', 'bmstu_group', 'phone_number', 'tg_username']
+        for field in fields:
+            dct[self._meta.get_field(field).verbose_name] = getattr(self, field)
+        return dct
 
     def get_departments_list(self):
         """
@@ -47,8 +60,3 @@ class Person(models.Model):
         :return:
         """
         return self.events.all()
-
-    class Meta:
-        ordering = '-surname', '-name', '-patronymic',
-        verbose_name = 'Человек'
-        verbose_name_plural = 'Люди'

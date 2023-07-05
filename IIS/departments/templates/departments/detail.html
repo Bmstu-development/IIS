@@ -1,0 +1,17 @@
+{% extends 'detail.html' %}
+
+{% load render_table from django_tables2 %}
+
+{% block detail_table %}
+    {% for field_name, field_value in fields %}
+        <tr>
+            <th scope="row">{{ field_name }}</th>
+            <td>{{ field_value }}</td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+{% block detail_additional %}
+    {% for act in object.get_activists_list %}
+        <div><a href="{% url 'person_detail' act.pk %}">{{ act }}</a></div>
+    {% endfor %}
+{% endblock %}

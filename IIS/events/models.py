@@ -20,8 +20,23 @@ class Event(models.Model):
                                          related_name='event_supervisor_match', blank=True)
     status = models.IntegerField(verbose_name='Статус', default=0)
 
+    class Meta:
+        ordering = '-dt_start', '-name',
+        verbose_name = 'Событие'
+        verbose_name_plural = 'События'
+
     def __str__(self):
         return self.name
+
+    def get_fields(self):
+        dct = dict()
+
+        fields = ['name', 'descr',  'dt_start', 'dt_finish', 't_start', 't_finish', 'frequently', 'audience_num']
+        for field in fields:
+            dct[self._meta.get_field(field).verbose_name] = getattr(self, field)
+        dct['teachers'] = self.get_teachers_list()
+        dct['supervisors'] = self.get_supervisors_list()
+        return dct
 
     def get_teachers_list(self):
         """
@@ -42,13 +57,9 @@ class Event(models.Model):
         Возвращает список всех слушателей курса
         :return:
         """
-        result = list()
-        for pn in Person.objects.all():
-            if self in pn.get_events_list():
-                result.append(pn)
-        return result
-
-    class Meta:
-        ordering = '-dt_start', '-name',
-        verbose_name = 'Событие'
-        verbose_name_plural = 'События'
+        # result = list()
+        # for pn in Person.objects.all():
+        #     if self in pn.get_events_list():
+        #         result.append(pn)
+        # print(result)
+        return Person.objects.filter(events__name=self.name)
