@@ -1,0 +1,30 @@
+version: "3"
+
+volumes:
+  db_volume:
+
+services:
+  iis:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    container_name: iis_container
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 8000:8000
+    environment:
+      - TZ=Europe/Moscow
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    restart: always
+
+  postgres:
+    container_name: postgres_container
+    image: postgres:latest
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    env_file:
+      - .env
+    restart: always

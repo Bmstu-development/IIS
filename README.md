@@ -1,4 +1,4 @@
-# ISS
+# IIS
 ISCRA Information System</br>
 Приложения:
 * accounts - авторизация в системе
