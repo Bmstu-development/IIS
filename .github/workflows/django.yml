@@ -22,7 +22,7 @@ jobs:
           pip install -r requirements.txt
       - name: Compile
         run: |
-          python ISS/manage.py runserver
+          python IIS/manage.py runserver
       - name: Run Tests
         run: |
-          python ISS/manage.py test
+          python IIS/manage.py test
