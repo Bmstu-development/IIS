@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html>
 <style>
-    .main-footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        text-align: center;
+    .main {
+        margin-left: 10%;
     }
 </style>
 <head>
@@ -14,18 +10,14 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-<main>
-    {% block body %}
-    <div>
-        <div>
-            {% block content_header %}{% endblock %}
-            {% block content %}{% endblock %}
-        </div>
-        <footer class="main-footer">
-            {% include 'footer.html' %}
-        </footer>
+{% block body %}
+    <div class="wrapper">
+        <div>{% include 'header.html' %}</div>
+        <div class="menu-wrapper">{% include 'menu.html' %}</div>
+        <div class="content-header-wrapper main">{% block content_header %}{% endblock %}</div>
+        <div class="content-wrapper main">{% block content %}{% endblock %}</div>
+        <div>{% include 'footer.html' %}</div>
     </div>
-    {% endblock %}
-</main>
+{% endblock %}
 </body>
 </html>

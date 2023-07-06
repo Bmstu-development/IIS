@@ -1,7 +1,13 @@
-from django.views.generic import DetailView, CreateView
 from django_tables2 import SingleTableView
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.views.generic import DetailView, CreateView
 
 from . import models, tables
+
+
+def redirect_from_start_page(request):
+    return HttpResponseRedirect(reverse('people_list'))
 
 
 class PeopleListView(SingleTableView):
