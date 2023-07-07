@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Start page{% endblock %}
+
+{% block content %}
+<a href="{% url 'people_list' %}">Люди</a>
+<a href="{% url 'events_list' %}">Мероприятия</a>
+<a href="{% url 'departments_list' %}">Отделы</a>
+{% endblock %}

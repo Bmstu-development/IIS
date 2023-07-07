@@ -1,0 +1,36 @@
+version: "3"
+
+volumes:
+  db_volume:
+  iis_volume:
+
+services:
+  iis:
+    build: .
+    command: ./entrypoint.sh ${DB_HOST}
+    container_name: iis_container
+    volumes:
+      - iis_volume:/usr/src/app
+    ports:
+      - 8000:8000
+    environment:
+      - TZ=Europe/Moscow
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    depends_on:
+      - postgres_db
+    restart: always
+
+  postgres_db:
+    container_name: postgres_container
+    image: postgres:latest
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    restart: always

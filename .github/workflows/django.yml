@@ -1,0 +1,33 @@
+name: Django CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Fill env-file
+        run: |
+          echo APP_KEY=${{ secrets.APP_KEY }} >> .env
+          echo DB_HOST=${{ env.DB_HOST }} >> .env
+          echo DB_PORT=${{ env.DB_PORT }} >> .env
+          echo DB_USER=${{ env.DB_USER }} >> .env
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+          echo DB_NAME=${{ env.DB_NAME }} >> .env
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Tests
+        run: |
+          python IIS/manage.py test
