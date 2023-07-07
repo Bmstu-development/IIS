@@ -1,6 +1,6 @@
 name: Django CI
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Fill env-file
         run: |
-          echo API_KEY=${{ secrets.API_KEY }} >> .env
+          echo APP_KEY=${{ secrets.APP_KEY }} >> .env
           echo DB_HOST=${{ env.DB_HOST }} >> .env
           echo DB_PORT=${{ env.DB_PORT }} >> .env
           echo DB_USER=${{ env.DB_USER }} >> .env
