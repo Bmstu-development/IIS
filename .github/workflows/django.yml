@@ -30,4 +30,5 @@ jobs:
           pip install -r requirements.txt
       - name: Run Tests
         run: |
-          python IIS/manage.py test
+          cd IIS
+          python manage.py test
