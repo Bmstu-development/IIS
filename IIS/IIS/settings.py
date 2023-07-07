@@ -136,7 +136,4 @@ LOGIN_REDIRECT_URL = 'start_page'
 LOGOUT_REDIRECT_URL = 'login'
 OPEN_URLS = [
     'logout',
-    # 'password_reset',
-    # 'password_reset_done',
-    # 'password_reset_complete'
 ]

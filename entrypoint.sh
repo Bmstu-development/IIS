@@ -1,15 +1,21 @@
 #!/bin/sh
 
-echo "waiting for postgres..."
+set -e
 
-while ! nc -z $DB_HOST $DB_PORT; do
-  sleep 0.1
+host="$1"
+shift
+cmd="$@"
+
+until PGPASSWORD=${DB_PASSWORD} psql -h "$host" -U "postgres" -c '\q'; do
+  echo >&2 "Postgres is unavailable - sleeping"
+  sleep 1
 done
 
-echo "postgres started!"
+echo >&2 "Postgres is up - executing command"
 
-python manage.py flush --no-input
+cd IIS
 python manage.py migrate
-python manage.py loaddata IIS/fixtures/users.json
+python manage.py loaddata fixtures/users.json
+python manage.py runserver 0.0.0.0:8000
 
-exec "$@"
+exec $cmd
