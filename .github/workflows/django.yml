@@ -10,8 +10,8 @@ jobs:
         image: postgres:13
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: github_actions
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -25,7 +25,6 @@ jobs:
       - name: Fill env-file
         run: |
           echo APP_KEY=${{ secrets.APP_KEY }} >> .env
-          echo DB_HOST=${{ env.DB_HOST }} >> .env
           echo DB_PORT=${{ env.DB_PORT }} >> .env
           echo DB_USER=${{ env.DB_USER }} >> .env
           echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env

@@ -13,6 +13,7 @@ done
 
 echo >&2 "Postgres is up - executing command"
 
+export IS_DOCKER_COMPOSE=1
 cd IIS
 python manage.py migrate
 python manage.py loaddata fixtures/users.json

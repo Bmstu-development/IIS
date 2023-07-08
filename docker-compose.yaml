@@ -7,7 +7,7 @@ volumes:
 services:
   iis:
     build: .
-    command: ./entrypoint.sh ${DB_HOST}
+    command: ./entrypoint.sh postgres_db
     container_name: iis_container
     volumes:
       - iis_volume:/usr/src/app
@@ -15,7 +15,7 @@ services:
       - 8000:8000
     environment:
       - TZ=Europe/Moscow
-      - DB_HOST=${DB_HOST}
+      - DB_HOST=postgres_db
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}

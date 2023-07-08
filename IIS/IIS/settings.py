@@ -85,13 +85,27 @@ WSGI_APPLICATION = 'IIS.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': os.environ['DB_HOST'],
+        'HOST': 'localhost',
         'PORT': os.environ['DB_PORT'],
         'NAME': os.environ['DB_NAME'],
         'USER': os.environ['DB_USER'],
         'PASSWORD': os.environ['DB_PASSWORD']
     }
 }
+
+if os.environ.get('IS_DOCKER_COMPOSE'):
+    DATABASES['default']['HOST'] = 'postgres_db'
+elif os.environ.get('GITHUB_WORKFLOW'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'HOST': 'localhost',
+            'PORT': os.environ['DB_PORT'],
+            'NAME': 'github_actions',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres'
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
