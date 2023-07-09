@@ -18,7 +18,7 @@ class Person(models.Model):
                                     default=list())
 
     class Meta:
-        ordering = '-surname', '-name', '-patronymic',
+        ordering = 'surname', 'name', 'patronymic',
         verbose_name = 'Человек'
         verbose_name_plural = 'Люди'
 

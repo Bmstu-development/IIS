@@ -10,7 +10,7 @@ class Department(models.Model):
                                       blank=True, null=True)
 
     class Meta:
-        ordering = '-name',
+        ordering = 'name',
         verbose_name = 'Отдел'
         verbose_name_plural = 'Отделы'
 

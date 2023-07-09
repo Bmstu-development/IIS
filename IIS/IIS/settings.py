@@ -42,10 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_tables2',
-    'accounts',
-    'departments',
-    'events',
-    'people',
+    'rest_framework',
+    'departments.apps.DepartmentsConfig',
+    'events.apps.EventsConfig',
+    'people.apps.PeopleConfig',
 ]
 
 MIDDLEWARE = [

@@ -21,7 +21,7 @@ class Event(models.Model):
     status = models.IntegerField(verbose_name='Статус', default=0)
 
     class Meta:
-        ordering = '-dt_start', '-name',
+        ordering = 'dt_start', 'name',
         verbose_name = 'Событие'
         verbose_name_plural = 'События'
 
