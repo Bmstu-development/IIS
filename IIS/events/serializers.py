@@ -3,7 +3,7 @@ from rest_framework import serializers
 from . import models
 
 
-class PersonSerializer(serializers.ModelSerializer):
+class EventSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Person
+        model = models.Event
         fields = '__all__'
