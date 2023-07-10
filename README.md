@@ -13,8 +13,6 @@ ISCRA Information System</br>
 API:
 * /api/v1/people/ - список людей
   * /api/v1/people/\<pk:int>/ - человек pk
-  * /api/v1/people/\<pk:int>/get_departments - отделы человека pk
-  * /api/v1/people/\<pk:int>/get_events - мероприятия человека pk
 * /api/v1/events/ - список мероприятий
   * /api/v1/events/\<pk:int>/ - мероприятие pk
 * /api/v1/departments/ - список отделов

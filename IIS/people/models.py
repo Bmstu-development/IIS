@@ -33,16 +33,16 @@ class Person(models.Model):
             dct[self._meta.get_field(field).verbose_name] = getattr(self, field)
         return dct
 
-    def get_departments_list(self):
+    def get_departments_pk_list(self):
         """
         Возвращает список всех отделов, куда человек входит
         :return:
         """
-        return Department.objects.filter(Q(activists__id=self.id) | Q(id_supervisor=self))
+        return list(set([dp.id for dp in Department.objects.filter(Q(activists__id=self.id) | Q(id_supervisor=self))]))
 
-    def get_events_list(self):
+    def get_events_pk_list(self):
         """
         Возвращает список всех курсов, студентом которых человек является
         :return:
         """
-        return Event.objects.filter(Q(listeners__id=self.id) | Q(supervisors__id=self.id))
+        return list(set([ev.id for ev in Event.objects.filter(Q(listeners__id=self.id) | Q(supervisors__id=self.id))]))
