@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
 
 from . import models, serializers
 
@@ -8,6 +9,7 @@ from . import models, serializers
 class PeopleViewSet(viewsets.ModelViewSet):
     queryset = models.Person.objects.all()
     serializer_class = serializers.PersonSerializer
+    permission_classes = IsAdminUser,
 
     def __check_pk(self, pk):
         if pk is None:
