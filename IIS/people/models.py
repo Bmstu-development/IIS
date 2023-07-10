@@ -1,4 +1,8 @@
 from django.db import models
+from django.db.models import Q
+
+from departments.models import Department
+from events.models import Event
 
 
 class Person(models.Model):
@@ -12,10 +16,6 @@ class Person(models.Model):
     bmstu_group = models.CharField(verbose_name='Учебная группа (МГТУ)', blank=True, null=True)
     phone_number = models.CharField(verbose_name='Телефонный номер', blank=True, null=False)
     tg_username = models.CharField(verbose_name='Тег в телеграме', blank=True, null=False)
-    departments = models.ManyToManyField('departments.Department', verbose_name='Отдел',
-                                         related_name='person_department_match', blank=True, default=list())
-    events = models.ManyToManyField('events.Event', verbose_name='Курс', related_name='person_event_match', blank=True,
-                                    default=list())
 
     class Meta:
         ordering = 'surname', 'name', 'patronymic',
@@ -23,7 +23,7 @@ class Person(models.Model):
         verbose_name_plural = 'Люди'
 
     def __str__(self):
-        return f'{self.surname} {self.name} {self.patronymic}'
+        return f'{self.surname} {self.name} {self.patronymic if self.patronymic else ""}'
 
     def get_fields(self):
         dct = dict()
@@ -38,25 +38,11 @@ class Person(models.Model):
         Возвращает список всех отделов, куда человек входит
         :return:
         """
-        return self.departments.all()
-
-    def get_departments_supervisor_list(self):
-        """
-        Возвращает список всех отделов, руководителем которых человек является
-        :return:
-        """
-        return [dp for dp in self.departments.all() if dp.id_supervisor == self]
-
-    def get_events_teacher_list(self):
-        """
-        Возвращает список всех курсов, преподавателем которых человек является
-        :return:
-        """
-        return [ev for ev in self.events.all() if ev.id_teacher == self]
+        return Department.objects.filter(Q(activists__id=self.id) | Q(id_supervisor=self))
 
     def get_events_list(self):
         """
         Возвращает список всех курсов, студентом которых человек является
         :return:
         """
-        return self.events.all()
+        return Event.objects.filter(Q(listeners__id=self.id) | Q(supervisors__id=self.id))

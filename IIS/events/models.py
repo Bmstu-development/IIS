@@ -1,11 +1,9 @@
 from django.db import models
 
-from people.models import Person
-
 
 class Event(models.Model):
     # TODO на странице создания: в поле указывается число раз, столько создается рамок, в каждой из которых ввод
-    #  времени, аудитории, препода
+    #  времени, аудитории, [преподавателя]
     name = models.CharField(verbose_name='Название')
     descr = models.TextField(verbose_name='Описание', blank=True, null=True)
     dt_start = models.DateField(verbose_name='Дата начала', blank=True, null=True)
@@ -18,6 +16,8 @@ class Event(models.Model):
                                       related_name='event_teacher_match', blank=True)
     supervisors = models.ManyToManyField('people.Person', verbose_name='Староста',
                                          related_name='event_supervisor_match', blank=True)
+    listeners = models.ManyToManyField('people.Person', verbose_name='Слушатели', related_name='event_listeners_match',
+                                       blank=True)
     status = models.IntegerField(verbose_name='Статус', default=0)
 
     class Meta:
@@ -30,12 +30,11 @@ class Event(models.Model):
 
     def get_fields(self):
         dct = dict()
-
-        fields = ['name', 'descr',  'dt_start', 'dt_finish', 't_start', 't_finish', 'frequently', 'audience_num']
+        fields = ['name', 'descr', 'dt_start', 'dt_finish', 't_start', 't_finish', 'frequently', 'audience_num']
         for field in fields:
             dct[self._meta.get_field(field).verbose_name] = getattr(self, field)
-        dct['teachers'] = self.get_teachers_list()
-        dct['supervisors'] = self.get_supervisors_list()
+        dct[self._meta.get_field('teachers').verbose_name] = ', '.join([str(p) for p in self.get_teachers_list()])
+        dct[self._meta.get_field('supervisors').verbose_name] = ', '.join([str(p) for p in self.get_supervisors_list()])
         return dct
 
     def get_teachers_list(self):
@@ -57,9 +56,4 @@ class Event(models.Model):
         Возвращает список всех слушателей курса
         :return:
         """
-        # result = list()
-        # for pn in Person.objects.all():
-        #     if self in pn.get_events_list():
-        #         result.append(pn)
-        # print(result)
-        return Person.objects.filter(events__name=self.name)
+        return self.listeners.all()
