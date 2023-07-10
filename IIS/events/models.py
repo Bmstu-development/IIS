@@ -1,3 +1,5 @@
+from simple_history.models import HistoricalRecords
+
 from django.db import models
 
 
@@ -19,6 +21,7 @@ class Event(models.Model):
     listeners = models.ManyToManyField('people.Person', verbose_name='Слушатели', related_name='event_listeners_match',
                                        blank=True)
     status = models.IntegerField(verbose_name='Статус', default=0)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = 'dt_start', 'name',

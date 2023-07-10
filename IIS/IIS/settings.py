@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_tables2',
     'rest_framework',
+    'simple_history',
     'departments.apps.DepartmentsConfig',
     'events.apps.EventsConfig',
     'people.apps.PeopleConfig',
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
     'IIS.middlewares.AuthRequiredMiddleware',
 ]
 

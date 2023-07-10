@@ -1,3 +1,5 @@
+from simple_history.models import HistoricalRecords
+
 from django.db import models
 
 
@@ -8,6 +10,7 @@ class Department(models.Model):
                                       blank=True, null=True)
     activists = models.ManyToManyField('people.Person', verbose_name='Активисты',
                                        related_name='department_activists_match', blank=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = 'name',
