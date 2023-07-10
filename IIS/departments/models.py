@@ -1,16 +1,16 @@
 from django.db import models
 
-from people.models import Person
-
 
 class Department(models.Model):
     name = models.CharField(verbose_name='Название')
     descr = models.TextField(verbose_name='Описание')
     id_supervisor = models.ForeignKey('people.Person', verbose_name='Руководитель', on_delete=models.SET_NULL,
                                       blank=True, null=True)
+    activists = models.ManyToManyField('people.Person', verbose_name='Активисты',
+                                       related_name='department_activists_match', blank=True)
 
     class Meta:
-        ordering = '-name',
+        ordering = 'name',
         verbose_name = 'Отдел'
         verbose_name_plural = 'Отделы'
 
@@ -23,6 +23,8 @@ class Department(models.Model):
         fields = ['name', 'descr']
         for field in fields:
             dct[self._meta.get_field(field).verbose_name] = getattr(self, field)
+        dct[self._meta.get_field('id_supervisor').verbose_name] = str(
+            self.id_supervisor) if self.id_supervisor else 'Не указан'
         return dct
 
     def get_activists_list(self):
@@ -30,9 +32,4 @@ class Department(models.Model):
         Возвращает список активистов отдела
         :return:
         """
-        # result = list()
-        # for pn in Person.objects.all():
-        #     if self in pn.get_departments_list():
-        #         result.append(pn)
-        # return result
-        return Person.objects.filter(departments__name=self.name)
+        return self.activists.all()
