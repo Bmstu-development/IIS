@@ -1,11 +1,33 @@
+from simple_history.models import HistoricalRecords
+
 from django.db import models
 
-from people.models import Person
+from departments.models import Department
+
+
+class EventManager(models.Manager):
+    """
+
+    """
+
+    def for_user(self, user, view_only=False):
+        """
+
+        :param user:
+        :param view_only:
+        :return:
+        """
+        if view_only or user.is_superuser or Department.CRUD in user.groups.all().values_list('name', flat=True):
+            # для просмотра доступны все
+            # администратору доступны все
+            # пользователям с CRUD правом доступны все
+            return self.get_queryset()
+        return Event.objects.none()
 
 
 class Event(models.Model):
     # TODO на странице создания: в поле указывается число раз, столько создается рамок, в каждой из которых ввод
-    #  времени, аудитории, препода
+    #  времени, аудитории, [преподавателя]
     name = models.CharField(verbose_name='Название')
     descr = models.TextField(verbose_name='Описание', blank=True, null=True)
     dt_start = models.DateField(verbose_name='Дата начала', blank=True, null=True)
@@ -18,10 +40,15 @@ class Event(models.Model):
                                       related_name='event_teacher_match', blank=True)
     supervisors = models.ManyToManyField('people.Person', verbose_name='Староста',
                                          related_name='event_supervisor_match', blank=True)
+    listeners = models.ManyToManyField('people.Person', verbose_name='Слушатели', related_name='event_listeners_match',
+                                       blank=True)
     status = models.IntegerField(verbose_name='Статус', default=0)
+    history = HistoricalRecords()
+
+    objects = EventManager()
 
     class Meta:
-        ordering = '-dt_start', '-name',
+        ordering = 'dt_start', 'name',
         verbose_name = 'Событие'
         verbose_name_plural = 'События'
 
@@ -30,12 +57,11 @@ class Event(models.Model):
 
     def get_fields(self):
         dct = dict()
-
-        fields = ['name', 'descr',  'dt_start', 'dt_finish', 't_start', 't_finish', 'frequently', 'audience_num']
+        fields = ['name', 'descr', 'dt_start', 'dt_finish', 't_start', 't_finish', 'frequently', 'audience_num']
         for field in fields:
             dct[self._meta.get_field(field).verbose_name] = getattr(self, field)
-        dct['teachers'] = self.get_teachers_list()
-        dct['supervisors'] = self.get_supervisors_list()
+        dct[self._meta.get_field('teachers').verbose_name] = ', '.join([str(p) for p in self.get_teachers_list()])
+        dct[self._meta.get_field('supervisors').verbose_name] = ', '.join([str(p) for p in self.get_supervisors_list()])
         return dct
 
     def get_teachers_list(self):
@@ -57,9 +83,4 @@ class Event(models.Model):
         Возвращает список всех слушателей курса
         :return:
         """
-        # result = list()
-        # for pn in Person.objects.all():
-        #     if self in pn.get_events_list():
-        #         result.append(pn)
-        # print(result)
-        return Person.objects.filter(events__name=self.name)
+        return self.listeners.all()
