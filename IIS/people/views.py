@@ -6,11 +6,27 @@ from django.views.generic import DetailView, CreateView
 from . import models, tables
 
 
+class PersonViewFilterMixin:
+    """
+
+    """
+    def get_queryset(self):
+        return models.Person.objects.for_user(self.request.user, view_only=True)
+
+
+class PersonChangeFilterMixin:
+    """
+
+    """
+    def get_queryset(self):
+        return models.Person.objects.for_user(self.request.user)
+
+
 def redirect_from_start_page(request):
     return HttpResponseRedirect(reverse('people_list'))
 
 
-class PeopleListView(SingleTableView):
+class PeopleListView(PersonViewFilterMixin, SingleTableView):
     template_name = 'people/list.html'
     table_class = tables.PeopleTable
     model = models.Person
@@ -25,7 +41,7 @@ class PeopleListView(SingleTableView):
         return super().get_queryset().only(*fields)
 
 
-class PersonDetailView(DetailView):
+class PersonDetailView(PersonViewFilterMixin, DetailView):
     template_name = 'people/detail.html'
     model = models.Person
 

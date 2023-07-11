@@ -3,7 +3,7 @@ from simple_history.models import HistoricalRecords
 from django.db import models
 from django.db.models import Q
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 from departments.models import Department
 from events.models import Event
@@ -13,12 +13,33 @@ from utils.generators import generate_password
 
 class PersonManager(models.Manager):
     """
-
+    Класс-менеджер класса Person
     """
+
     def for_user(self, user, view_only=False):
-        if view_only:
+        """
+        Метод определения query_set в зависимости от намерений и прав пользователя user
+        :param user: инициатор вызова query_set
+        :param view_only: флаг - только чтение или изменение
+        :return: query_set объектов класса Person доступных user
+        """
+        if view_only or user.is_superuser:
+            # для просмотра доступны все
+            # администратору доступны все
             return self.get_queryset()
-        return self.get_queryset().filter()
+        is_crud = Department.CRUD in user.groups.all().values_list('name', flat=True)
+        subordinates_pk_list = user.get_subordinates_pk_list()
+        if is_crud and subordinates_pk_list:
+            # пользователям с CRUD правом, которые руководители, доступны все, кроме пользователей из других отделов
+            return self.get_queryset().exclude(Q(is_user=True) & ~Q(id__in=subordinates_pk_list))
+        if is_crud:
+            # пользователям с CRUD правом, которые НЕруководители, доступны все НЕпользователи
+            return self.get_queryset().filter(is_user=False)
+        if subordinates_pk_list:
+            # пользователям без CRUD права, которые руководители, доступны свои активисты
+            return self.get_queryset().filter(id__in=subordinates_pk_list)
+        # пользователям без CRUD права, которые НЕруководители, недоступно ничего
+        return Person.objects.none()
 
 
 class Person(models.Model):
@@ -45,6 +66,10 @@ class Person(models.Model):
         return f'{self.surname} {self.name} {self.patronymic if self.patronymic else ""}'
 
     def get_fields(self):
+        """
+
+        :return:
+        """
         dct = dict()
 
         fields = ['surname', 'name', 'patronymic', 'organisation', 'bmstu_group', 'phone_number', 'tg_username',
@@ -53,26 +78,65 @@ class Person(models.Model):
             dct[self._meta.get_field(field).verbose_name] = getattr(self, field)
         return dct
 
+    def get_departments_list(self):
+        """
+        Возвращает список отделов, в которые активистом или руководителем входит self
+        :return: List объектов класса Department
+        """
+        result = list()
+        for dp in Department.objects.all():
+            if dp.supervisor_instance == self or self in dp.activists.all():
+                result.append(dp)
+        return result
+
     def get_departments_pk_list(self):
         """
-        Возвращает список всех отделов, куда человек входит
-        :return:
+        Возвращает список pk отделов, в которые активистом или руководителем входит self
+        :return: List pk объектов класса Department
         """
-        return list(set([dp.id for dp in Department.objects.filter(Q(activists__id=self.id) | Q(supervisor_instance=self))]))
+        return [dp.id for dp in self.get_departments_list()]
+
+    def get_subordinate_departments_list(self):
+        """
+        Возвращает список отделов, в которые руководителем входит self
+        :return: List объектов класса Department
+        """
+        return [dp for dp in self.get_departments_list() if dp.supervisor_instance == self]
+
+    def get_events_list(self):
+        """
+        Возвращает список мероприятий, к которым старостой, преподавателем или слушателем относится self
+        :return: List объектов класса Event
+        """
+        result = list()
+        for ev in Event.objects.all():
+            if self in ev.teachers.all() or self in ev.supervisors.all() or self in ev.listeners.all():
+                result.append(ev)
+        return result
 
     def get_events_pk_list(self):
         """
-        Возвращает список всех курсов, студентом которых человек является
-        :return:
+        Возвращает список pk мероприятий, к которым старостой, преподавателем или слушателем относится self
+        :return: List pk объектов класса Event
         """
-        return list(set([ev.id for ev in Event.objects.filter(Q(listeners__id=self.id) | Q(supervisors__id=self.id))]))
+        return [ev.id for ev in self.get_events_list()]
+
+    def get_subordinates_pk_list(self):
+        """
+        Возвращает список pk людей, которые входят в отдел(ы) под руководством self
+        :return: List pk объектов класса Person
+        """
+        # TODO: OPTIMIZE
+        result = set()
+        for dp in self.get_subordinate_departments_list():
+            result = result.union(set(dp.activists.all().values_list(flat=True)))
+        return list(result)
 
     def make_user(self):
         """
         Создает из персоны self пользователя. Автоматически генерирует логин и пароль, выполняет объекта пользователя
         к модели персоны self через внешний ключ
-        :return:
-        Пароль нового пользователя
+        :return: Пароль нового пользователя
         """
         if self.is_user:
             raise ValueError(f'Person pk={self.id} is already user')
@@ -89,6 +153,12 @@ class Person(models.Model):
             new_user.first_name = self.name
             new_user.last_name = self.surname
             new_user.save()
+
+        for dp in self.get_departments_list():
+            if dp.permissions == Department.NONE:
+                continue
+            Group.objects.get(name=dp.permissions).user_set.add(new_user)
+
         self.user_instance = new_user
         self.is_user = True
         self.save()
@@ -97,7 +167,7 @@ class Person(models.Model):
     def delete_user(self):
         """
         Удаляет пользователя, связанного с персоной self
-        :return:
+        :return: None
         """
         if not self.is_user:
             raise ValueError(f'Person pk={self.id} is not user')

@@ -2,15 +2,27 @@ from simple_history.models import HistoricalRecords
 
 from django.db import models
 
+from departments.models import Department
+
 
 class EventManager(models.Manager):
     """
 
     """
+
     def for_user(self, user, view_only=False):
-        if view_only:
+        """
+
+        :param user:
+        :param view_only:
+        :return:
+        """
+        if view_only or user.is_superuser or Department.CRUD in user.groups.all().values_list('name', flat=True):
+            # для просмотра доступны все
+            # администратору доступны все
+            # пользователям с CRUD правом доступны все
             return self.get_queryset()
-        return self.get_queryset().filter()
+        return Event.objects.none()
 
 
 class Event(models.Model):

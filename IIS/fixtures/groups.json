@@ -1,22 +1,25 @@
 [
   {
     "model": "auth.group",
+    "pk": 1,
     "fields": {
-      "name": "NRdep",
+      "name": "crud",
       "permissions": []
     }
   },
   {
     "model": "auth.group",
+    "pk": 2,
     "fields": {
-      "name": "ROdep",
+      "name": "readonly",
       "permissions": []
     }
   },
-  {
+    {
     "model": "auth.group",
+    "pk": 3,
     "fields": {
-      "name": "RWdep",
+      "name": "none",
       "permissions": []
     }
   }

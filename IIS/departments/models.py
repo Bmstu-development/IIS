@@ -1,7 +1,6 @@
 from simple_history.models import HistoricalRecords
 
 from django.db import models
-from django.contrib.auth.models import Group
 
 
 class DepartmentManager(models.Manager):
@@ -10,20 +9,37 @@ class DepartmentManager(models.Manager):
     """
 
     def for_user(self, user, view_only=False):
+        """
+
+        :param user:
+        :param view_only:
+        :return:
+        """
         if view_only or user.is_superuser:
+            # для просмотра доступны все
+            # администратору доступны все
             return self.get_queryset()
+        # руководителю отдела доступно редактирование
         return self.get_queryset().filter(supervisor_instance=user)
 
 
 class Department(models.Model):
+    CRUD = 'crud'
+    READONLY = 'readonly'
+    NONE = 'none'
+    PERMISSION_CHOICES = (
+        (CRUD, 'Чтение, изменение, добавление'),
+        (READONLY, 'Только чтение'),
+        (NONE, 'Нет прав'),
+    )
+
     name = models.CharField(verbose_name='Название')
     descr = models.TextField(verbose_name='Описание')
     supervisor_instance = models.ForeignKey('people.Person', verbose_name='Руководитель', on_delete=models.SET_NULL,
                                             blank=True, null=True)
     activists = models.ManyToManyField('people.Person', verbose_name='Активисты',
                                        related_name='department_activists_match', blank=True)
-    # group = models.ForeignKey(Group, verbose_name='', on_delete=models.SET_NULL,
-    #                           default=Group.objects.get(name='NRdep'), blank=True, null=True)
+    permissions = models.CharField(verbose_name='Уровень доступа', choices=PERMISSION_CHOICES, default=NONE)
     history = HistoricalRecords()
 
     objects = DepartmentManager()
