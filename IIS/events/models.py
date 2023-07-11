@@ -1,4 +1,28 @@
+from simple_history.models import HistoricalRecords
+
 from django.db import models
+
+from departments.models import Department
+
+
+class EventManager(models.Manager):
+    """
+
+    """
+
+    def for_user(self, user, view_only=False):
+        """
+
+        :param user:
+        :param view_only:
+        :return:
+        """
+        if view_only or user.is_superuser or Department.CRUD in user.groups.all().values_list('name', flat=True):
+            # для просмотра доступны все
+            # администратору доступны все
+            # пользователям с CRUD правом доступны все
+            return self.get_queryset()
+        return Event.objects.none()
 
 
 class Event(models.Model):
@@ -19,6 +43,9 @@ class Event(models.Model):
     listeners = models.ManyToManyField('people.Person', verbose_name='Слушатели', related_name='event_listeners_match',
                                        blank=True)
     status = models.IntegerField(verbose_name='Статус', default=0)
+    history = HistoricalRecords()
+
+    objects = EventManager()
 
     class Meta:
         ordering = 'dt_start', 'name',

@@ -34,3 +34,4 @@ API:
   * `cd IIS`
   * `python manage.py migrate`
   * `python manage.py loaddata fixtures/users.json`
+  * `python manage.py loaddata fixtures/groups.json`
