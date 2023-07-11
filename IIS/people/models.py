@@ -7,7 +7,18 @@ from django.contrib.auth.models import User
 
 from departments.models import Department
 from events.models import Event
-from utils.converters import latinize, generate_password
+from utils.converters import latinize
+from utils.generators import generate_password
+
+
+class PersonManager(models.Manager):
+    """
+
+    """
+    def for_user(self, user, view_only=False):
+        if view_only:
+            return self.get_queryset()
+        return self.get_queryset().filter()
 
 
 class Person(models.Model):
@@ -22,6 +33,8 @@ class Person(models.Model):
     user_instance = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='ID пользователя',
                                       on_delete=models.SET_NULL, blank=True, null=True)
     history = HistoricalRecords()  # Person.objects.get(id=1).history.all().first().history_date / ...history_user
+
+    objects = PersonManager()
 
     class Meta:
         ordering = 'surname', 'name', 'patronymic',
@@ -45,7 +58,7 @@ class Person(models.Model):
         Возвращает список всех отделов, куда человек входит
         :return:
         """
-        return list(set([dp.id for dp in Department.objects.filter(Q(activists__id=self.id) | Q(id_supervisor=self))]))
+        return list(set([dp.id for dp in Department.objects.filter(Q(activists__id=self.id) | Q(supervisor_instance=self))]))
 
     def get_events_pk_list(self):
         """
@@ -73,6 +86,9 @@ class Person(models.Model):
                 i += 1
         except User.DoesNotExist:
             new_user = User.objects.create_user(username=username + (f'_{str(i)}' if i else str()), password=password)
+            new_user.first_name = self.name
+            new_user.last_name = self.surname
+            new_user.save()
         self.user_instance = new_user
         self.is_user = True
         self.save()

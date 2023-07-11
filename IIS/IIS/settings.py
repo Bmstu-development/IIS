@@ -28,9 +28,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['APP_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+if os.environ.get('IS_DOCKER_COMPOSE') is None:
+    DEBUG = True
+    ALLOWED_HOSTS = []
+else:
+    DEBUG = False
+    ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -60,6 +63,9 @@ MIDDLEWARE = [
     'simple_history.middleware.HistoryRequestMiddleware',
     'IIS.middlewares.AuthRequiredMiddleware',
 ]
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 60 * 60
 
 ROOT_URLCONF = 'IIS.urls'
 

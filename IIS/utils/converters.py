@@ -1,5 +1,3 @@
-from random import choice, randint, shuffle
-
 ALLOWED_SYMBOLS = '&*()+-/?!$#@|'
 ALLOWED_LETTERS = 'abcdefghijklmnopqrstuvwxyz0123456789_'
 TRANSLATED_LETTERS = 'абвгдеёжзийклмнопрстуфхцчшщыэюя №%'
@@ -22,19 +20,3 @@ def latinize(string):
         elif char in TRANSLATED_LETTERS:
             new_string += transl_dict[char]
     return new_string.strip('_')
-
-
-def generate_password(length):
-    if length < 8:
-        raise ValueError('Password must not be shorter than 8 characters')
-
-    pwd = str()
-    for i in range(int(length / 3)):
-        pwd += choice(ALLOWED_LETTERS)
-        pwd += choice(ALLOWED_LETTERS.upper())
-        pwd += choice(2 * ALLOWED_SYMBOLS)
-    for i in range(length - len(pwd)):
-        pwd += choice(ALLOWED_SYMBOLS)
-    pwd_list = list(pwd)
-    shuffle(pwd_list)
-    return ''.join(pwd_list)

@@ -3,6 +3,16 @@ from simple_history.models import HistoricalRecords
 from django.db import models
 
 
+class EventManager(models.Manager):
+    """
+
+    """
+    def for_user(self, user, view_only=False):
+        if view_only:
+            return self.get_queryset()
+        return self.get_queryset().filter()
+
+
 class Event(models.Model):
     # TODO на странице создания: в поле указывается число раз, столько создается рамок, в каждой из которых ввод
     #  времени, аудитории, [преподавателя]
@@ -22,6 +32,8 @@ class Event(models.Model):
                                        blank=True)
     status = models.IntegerField(verbose_name='Статус', default=0)
     history = HistoricalRecords()
+
+    objects = EventManager()
 
     class Meta:
         ordering = 'dt_start', 'name',

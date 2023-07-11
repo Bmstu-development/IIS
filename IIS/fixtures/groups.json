@@ -1,0 +1,23 @@
+[
+  {
+    "model": "auth.group",
+    "fields": {
+      "name": "NRdep",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "fields": {
+      "name": "ROdep",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "fields": {
+      "name": "RWdep",
+      "permissions": []
+    }
+  }
+]
