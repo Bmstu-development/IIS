@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('events', '0002_initial_squashed_0003_rename_id_supervisor_event_supervisors_and_more'),
+        ('events', '0002_add_fields'),
         ('people', '0003_remove_person_departments_remove_person_events'),
     ]
 

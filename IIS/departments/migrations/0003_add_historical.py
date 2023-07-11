@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('people', '0003_remove_person_departments_remove_person_events'),
         ('people', '0004_person_is_user_historicalperson'),
-        ('departments', '0002_initial_squashed_0003_alter_department_options'),
+        ('departments', '0002_add_fields'),
     ]
 
     operations = [
