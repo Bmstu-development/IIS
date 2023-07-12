@@ -3,6 +3,18 @@
 {% load render_table from django_tables2 %}
 
 {% block detail_table %}
+    <tr>
+        Последнее изменение произошло {{ object.history.all.first.history_date }},
+        {% if object.history.all.first.history_user %}
+            {% if object.history.all.first.history_user.get_full_name %}
+                выполнено пользователем {{ object.history.all.first.history_user.get_full_name }}
+            {% else %}
+                выполнено пользователем {{ object.history.all.first.history_user.username }}
+            {% endif %}
+        {% else %}
+            пользователя определить не удалось.
+        {% endif %}
+    </tr>
     {% for field_name, field_value in fields %}
         <tr>
             <th scope="row">{{ field_name }}</th>

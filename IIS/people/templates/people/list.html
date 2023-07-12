@@ -5,6 +5,9 @@
 {% block page_title %}IIS | Люди{% endblock %}
 {% block page_name %}Люди{% endblock %}
 
+{# TODO https://datatables.net/examples/styling/bootstrap5.html #}
+{# TODO https://pypi.org/project/django-datatable/ #}
+
 {% block content %}
     <div class="row">
         <div class="col-12">
@@ -13,11 +16,12 @@
                     {% if user.is_superuser %}
                         {# TODO EDIT THIS IF #}
                         <div class="mb-4 text-right">
+                        {# TODO colour rgb(255, 127, 0) #}
                             <a href="{% url 'person_add' %}" class="btn btn-primary">Добавить нового человека<i
                                     class="fas fa-plus ml-2"></i></a>
                         </div>
                     {% endif %}
-                    <div class="table table-striped pb-4">
+                    <div>
                         {% render_table table %}
                     </div>
                 </div>

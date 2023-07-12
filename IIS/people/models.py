@@ -53,7 +53,7 @@ class Person(models.Model):
     is_user = models.BooleanField(verbose_name='Является ли пользователем', default=False)
     user_instance = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='ID пользователя',
                                       on_delete=models.SET_NULL, blank=True, null=True)
-    history = HistoricalRecords()  # Person.objects.get(id=1).history.all().first().history_date / ...history_user
+    history = HistoricalRecords()
 
     objects = PersonManager()
 

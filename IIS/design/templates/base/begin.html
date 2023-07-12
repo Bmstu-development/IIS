@@ -4,22 +4,30 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0"/>
-    <title>{% block page_title %}IIS | Авторизация{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{% block page_title %}IIS{% endblock %}</title>
+    {% include 'css_list.html' %}
+    {% block additional_css %}{% endblock %}
 </head>
+<style>
+    html, body {
+        height: 100% !important;
+        background-color: #e9ecef;
+    }
+</style>
 <body>
-<div class="wrapper d-flex flex-column">
-    <div class="container flex-fill d-flex h-100 justify-content-center">
-        <div class="row align-self-center w-100 justify-content-center">
-            <div class="login-box text-center">
-                <h1 class="display-4 text-truncate"></h1>
-                <p style="font-size: 48px; font-family: 'Bungee', sans-serif;">IIS</p>
-                {% block content %}{% endblock %}
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-110">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <p style="font-size: 48px; text-align: center">ISCRA Information System</p>
+            <div class="card">
+                <div class="card-body p-5 text-center">
+                    {% block content %}{% endblock %}
+                </div>
             </div>
         </div>
     </div>
-    {% include 'base/footer.html' %}
 </div>
+{% include 'base/footer.html' %}
 </body>
 </html>

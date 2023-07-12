@@ -1,7 +1,7 @@
 # IIS
 ISCRA Information System</br>
 Приложения:
-* ~~accounts - авторизация в системе~~
+* accounts - авторизация в системе
 * departments - отделы
 * events - мероприятия 
 * people - люди
