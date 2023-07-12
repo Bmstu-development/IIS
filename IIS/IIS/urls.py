@@ -25,7 +25,7 @@ from departments import api_views as department_api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('accounts.urls')),
     path('', include('people.urls')),
     path('events/', include('events.urls')),
     path('departments/', include('departments.urls')),

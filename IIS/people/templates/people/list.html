@@ -1,9 +1,27 @@
-{% extends 'base.html' %}
+{% extends 'base/base.html' %}
 {% load static %}
 {% load render_table from django_tables2 %}
 
-{% block title %}People list{% endblock %}
+{% block page_title %}IIS | Люди{% endblock %}
+{% block page_name %}Люди{% endblock %}
 
 {% block content %}
-    {% render_table table %}
-{% endblock %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {% if user.is_superuser %}
+                        {# TODO EDIT THIS IF #}
+                        <div class="mb-4 text-right">
+                            <a href="{% url 'person_add' %}" class="btn btn-primary">Добавить нового человека<i
+                                    class="fas fa-plus ml-2"></i></a>
+                        </div>
+                    {% endif %}
+                    <div class="table table-striped pb-4">
+                        {% render_table table %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

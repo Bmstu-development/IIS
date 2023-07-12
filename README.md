@@ -8,7 +8,8 @@ ISCRA Information System</br>
 </br>
 
 Фикстуры:
-* users.json (пользователь admin, пароль 8Xgex7E6CRCF4wz)
+* `users.json` (пользователь `admin`, пароль `8Xgex7E6CRCF4wz`)
+* `groups.json` (группы `crud`, `readonly`, `none`, определяющие права пользователей)
 
 API:
 * /api/v1/people/ - список людей

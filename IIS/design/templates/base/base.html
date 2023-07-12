@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .main {
+        margin-left: 10%;
+    }
+</style>
+<head>
+    <meta charset="utf-8">
+    <title>{% block page_title %}{% endblock %}</title>
+    {% include 'css_list.html' %}
+    {% block additional_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}hold-transition sidebar-mini layout-fixed{% endblock %}">
+{% block body %}
+    <div class="wrapper">
+        <div>{% include 'base/header.html' %}</div>
+        {#        <div class="menu-wrapper">{% include 'base/menu.html' %}</div>#}
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class=" mb-2">
+                        <div>
+                            <h1 class="m-0">
+                                {% block page_name %}{% endblock %}
+                            </h1>
+                        </div>
+                        <div>
+                            <ol class="breadcrumb  justify-content-end">
+                                {% block breadcrumbs %}{% endblock %}
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                {% block content %}{% endblock %}
+            </div>
+        </section>
+        <div>{% include 'base/footer.html' %}</div>
+    </div>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,11 @@
+{% extends 'base/begin.html' %}
+{% load static %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <input id="id_username" name="username" type="text" class="form-control" placeholder="Логин" required>
+        <input id="id_password" name="password" type="password" class="form-control" placeholder="Пароль" required>
+        <button type="submit" class="btn btn-primary btn-block">Войти</button>
+    </form>
+{% endblock %}
