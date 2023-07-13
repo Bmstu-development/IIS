@@ -1,57 +1,38 @@
-{% extends 'base/base.html' %}
-{% load static %}
-{% load render_table from django_tables2 %}
+{% extends 'base/list.html' %}
 
 {% block page_title %}IIS | Мероприятия{% endblock %}
 {% block page_name %}Мероприятия{% endblock %}
 
-{% block content %}
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="input-group mb-3 mr-3">
-                                <select class="form-select">
-                                    <option value="0" selected>Все</option>
-                                    <option value="1">Я староста</option>
-                                    <option value="2">Я преподаватель</option>
-                                    <option value="3">Я слушатель</option>
-                                    <option value="4">Начавшиеся</option>
-                                    <option value="5">Не начавшиеся</option>
-                                </select>
-                                <button class="btn btn-primary" type="button">Фильтр</button>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="input-group mb-3 mr-3">
-                                <input type="text" class="form-control" placeholder="Введите название">
-                                <button class="btn btn-primary" type="button" id="id_search_button">Поиск</button>
-                            </div>
-                        </div>
-                        {% if user.is_superuser %}
-                            <div class="mb-3 mr-3 col-md-2 offset-md-4">
-                                <div class="d-flex justify-content-end">
-                                    <a href="{% url 'event_add' %}" class="btn btn-primary">Добавить новое
-                                        мероприятие </a>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div>
-                        {% render_table table %}
-                    </div>
-                </div>
-            </div>
+{% block filter_fields %}
+    <div class="col-md-3">
+        <div class="input-group mb-3 mr-3">
+            <select class="form-select">
+                <option value="0" selected>Все</option>
+                <option value="1">Я староста</option>
+                <option value="2">Я преподаватель</option>
+                <option value="3">Я слушатель</option>
+                <option value="4">Начавшиеся</option>
+                <option value="5">Не начавшиеся</option>
+            </select>
+            <button class="btn btn-primary" type="button">Фильтр</button>
         </div>
     </div>
-{% endblock content %}
-{% block additional_js %}
-    <script>
-        $(function () {
-            $('.previous').children().first().html('<span aria-hidden="true">«</span>');
-            $('.next').children().first().html('<span aria-hidden="true">»</span>');
-        })
-    </script>
+{% endblock %}
+{% block search_fields %}
+    <div class="col-md-3">
+        <div class="input-group mb-3 mr-3">
+            <input type="text" class="form-control" placeholder="Введите название">
+            <button class="btn btn-primary" type="button" id="id_search_button">Поиск</button>
+        </div>
+    </div>
+{% endblock %}
+{% block add_button %}
+    {% if user.is_superuser %}
+        <div class="mb-3 mr-3 col-md-2 offset-md-4">
+            <div class="d-flex justify-content-end">
+                <a href="{% url 'event_add' %}" class="btn btn-primary">Добавить новое
+                    мероприятие </a>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
