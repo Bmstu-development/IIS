@@ -5,8 +5,11 @@ from design.tables import TableStyleMeta
 
 
 class EventsTable(tables.Table):
-    actions = tables.TemplateColumn(template_name='events/cell_action.html', verbose_name='')
+    actions = tables.TemplateColumn(template_name='events/cell_action.html', verbose_name='', orderable=False)
 
     class Meta(TableStyleMeta):
         model = models.Event
         fields = 'name', 'dt_start', 'dt_finish', 'status',
+        row_attrs = {
+            'event-id': lambda record: record.pk
+        }

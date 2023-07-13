@@ -4,14 +4,20 @@
     <meta charset="utf-8">
     <title>{% block page_title %}{% endblock %}</title>
     {% include 'css_list.html' %}
+    {% include 'js_list.html' %}
     {% block additional_css %}
         <style>
             html, body {
                 height: 100% !important;
                 background-color: #e9ecef;
             }
+
+            a {
+                text-decoration-line: none;
+            }
         </style>
     {% endblock %}
+    {% block additional_js %}{% endblock %}
 </head>
 <body class="{% block body_class %}hold-transition sidebar-mini layout-fixed{% endblock %}">
 {% block body %}
@@ -43,7 +49,7 @@
                 </div>
             </section>
         </div>
-        <div>{% include 'base/footer.html' %}</div>
+        {#        <div>{% include 'base/footer.html' %}</div>#}
     </div>
 {% endblock %}
 </body>

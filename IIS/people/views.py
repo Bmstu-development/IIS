@@ -10,6 +10,7 @@ class PersonViewFilterMixin:
     """
 
     """
+
     def get_queryset(self):
         return models.Person.objects.for_user(self.request.user, view_only=True)
 
@@ -18,6 +19,7 @@ class PersonChangeFilterMixin:
     """
 
     """
+
     def get_queryset(self):
         return models.Person.objects.for_user(self.request.user)
 
@@ -27,9 +29,10 @@ def redirect_from_start_page(request):
 
 
 class PeopleListView(PersonViewFilterMixin, SingleTableView):
+    model = models.Person
     template_name = 'people/list.html'
     table_class = tables.PeopleTable
-    model = models.Person
+    paginate_by = 15
 
     def get_queryset(self):
         fields = [

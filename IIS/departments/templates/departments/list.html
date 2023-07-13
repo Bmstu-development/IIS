@@ -10,12 +10,32 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    {% if user.is_superuser %}
-                        <div class="mb-4 text-right">
-                            <a href="{% url 'departments_add' %}" class="btn btn-primary">Создать новый отдел<i
-                                    class="fas fa-plus ml-2"></i></a>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="input-group mb-3 mr-3">
+                                <select class="form-select">
+                                    <option value="0" selected>Все</option>
+                                    <option value="1">Я руководитель</option>
+                                    <option value="2">Я активист</option>
+                                </select>
+                                <button class="btn btn-primary" type="button">Фильтр</button>
+                            </div>
                         </div>
-                    {% endif %}
+                        <div class="col-md-3">
+                            <div class="input-group mb-3 mr-3">
+                                <input type="text" class="form-control" placeholder="Введите название">
+                                <button class="btn btn-primary" type="button" id="id_search_button">Поиск</button>
+                            </div>
+                        </div>
+                        {% if user.is_superuser %}
+                            <div class="mb-3 mr-3 col-md-2 offset-md-4">
+                                <div class="d-flex justify-content-end">
+                                    <a href="{% url 'departments_add' %}" class="btn btn-primary">Добавить новый
+                                        отдел</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
                     <div>
                         {% render_table table %}
                     </div>
@@ -24,3 +44,11 @@
         </div>
     </div>
 {% endblock content %}
+{% block additional_js %}
+    <script>
+        $(function () {
+            $('.previous').children().first().html('<span aria-hidden="true">«</span>');
+            $('.next').children().first().html('<span aria-hidden="true">»</span>');
+        })
+    </script>
+{% endblock %}
