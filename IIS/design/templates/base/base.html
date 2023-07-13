@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+
+{#{% load static %}#}
+
 <html>
 <head>
     <meta charset="utf-8">
@@ -12,6 +15,16 @@
                 background-color: #e9ecef;
             }
 
+            .h-custom {
+                height: calc(100% - 73px);
+            }
+
+            @media (max-width: 450px) {
+                .h-custom {
+                    height: 100%;
+                }
+            }
+
             a {
                 text-decoration-line: none;
             }
@@ -19,7 +32,7 @@
     {% endblock %}
     {% block additional_js %}{% endblock %}
 </head>
-<body class="{% block body_class %}hold-transition sidebar-mini layout-fixed{% endblock %}">
+<body class="{% block body_class %}hold-transition sidebar-mini layout-fixed{% endblock %} h-custom">
 {% block body %}
     <div class="wrapper">
         <div>{% include 'base/header.html' %}</div>
@@ -49,7 +62,17 @@
                 </div>
             </section>
         </div>
-        {#        <div>{% include 'base/footer.html' %}</div>#}
+        {#        <footer style="border-top: 1px solid #dee2e6;#}
+        {#            color: #869099;#}
+        {#            padding: 1rem;#}
+        {#            background-color: #fff;">#}
+        {#            <div class="container">#}
+        {#                {% include 'base/footer.html' %}#}
+        {#            </div>#}
+        {#        </footer>#}
+        <div class="flex-colum text-center py-4 px-4 px-xl-5" style="background-color: white">
+            {% include 'base/footer.html' %}
+        </div>
     </div>
 {% endblock %}
 </body>
