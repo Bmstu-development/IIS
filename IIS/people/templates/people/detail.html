@@ -18,7 +18,7 @@
     </tr>
     {% for field_name, field_value in fields %}
         <tr>
-            <th scope="row">{{ field_name }}</th>
+            <th scope="row" class="w-25">{{ field_name }}</th>
             {% if field_name == 'Тег в телеграме' and field_value != 'Не указан' %}
                 <td><a href="https://t.me/{{ field_value }}">@{{ field_value }}</a></td>
             {% else %}
@@ -28,16 +28,57 @@
     {% endfor %}
 {% endblock %}
 {% block detail_additional %}
+    <button type="button" class="btn btn-primary btn-md mb-3 mr-3">Редактировать</button>
+    {% if object.is_user %}
+        <button type="button" class="btn btn-danger btn-md mb-3 mr-3">Удалить пользователя</button>
+    {% else %}
+        <button type="button" class="btn btn-primary btn-md mb-3 mr-3">Сделать пользователем</button>
+    {% endif %}
+    <button type="button" class="btn btn-danger btn-md mb-3 mr-3">Удалить</button>
     {% if departments_table.data|length > 0 %}
-        <div class="card-body">
-            {% render_table departments_table %}
+        <div class="card mb-3 mr-3">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h2>Отделы</h2>
+                    </div>
+                    <div class="col-md-2 offset-md-7">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#id_department_table" aria-expanded="false"
+                                    aria-controls="id_department_table">-
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body collapse" id="id_department_table">
+                {% render_table departments_table %}
+            </div>
         </div>
     {% else %}
         <h4>{{ object.name }} {{ object.surname }} не состоит ни в один из отделов</h4>
     {% endif %}
     {% if events_table.data|length > 0 %}
-        <div class="card-body">
-            {% render_table events_table %}
+        <div class="card mb-3 mr-3">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h2>Мероприятия</h2>
+                    </div>
+                    <div class="col-md-2 offset-md-7">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-tool" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#id_event_table" aria-expanded="false"
+                                    aria-controls="id_event_table">-
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body collapse" id="id_event_table">
+                {% render_table events_table %}
+            </div>
         </div>
     {% else %}
         <h4>{{ object.name }} {{ object.surname }} не участвует ни в одном из мероприятий</h4>
