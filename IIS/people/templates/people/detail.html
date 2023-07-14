@@ -2,31 +2,44 @@
 
 {% load render_table from django_tables2 %}
 
+{% block page_title %}IIS | Человек{% endblock %}
+{% block page_name %}{{ object.name }} {{ object.surname }}{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'people_list' %}">Люди</a>
+    </li>
+    <li class="breadcrumb-item active">Подробная информация</li>
+{% endblock %}
+
 {% block detail_table %}
     <tr>
-        Последнее изменение: {{ object.history.all.first.history_date }}
-        {% if object.history.all.first.history_user %}
-            , выполнено пользователем
-            {% if object.history.all.first.history_user.get_full_name %}
-                {{ object.history.all.first.history_user.get_full_name }}
-            {% else %}
-                {{ object.history.all.first.history_user.username }}
-            {% endif %}
-        {% endif %}
+        {{ object.get_last_changes_data }}
     </tr>
     {% for field_name, field_value in fields %}
         <tr>
             <th scope="row">{{ field_name }}</th>
-            <td>{{ field_value }}</td>
+            {% if field_name == 'Тег в телеграме' and field_value != 'Не указан' %}
+                <td><a href="https://t.me/{{ field_value }}">@{{ field_value }}</a></td>
+            {% else %}
+                <td>{{ field_value }}</td>
+            {% endif %}
         </tr>
     {% endfor %}
 {% endblock %}
 {% block detail_additional %}
-    {% for dep in object.get_departments_list %}
-        <div><a href="{% url 'departments_detail' dep.pk %}">{{ dep }}</a></div>
-    {% endfor %}
-    <div style="margin-top: 15px"></div>
-    {% for ev in object.get_events_list %}
-        <div><a href="{% url 'event_detail' ev.pk %}">{{ ev }}</a></div>
-    {% endfor %}
+    {% if departments_table.data|length > 0 %}
+        <div class="card-body">
+            {% render_table departments_table %}
+        </div>
+    {% else %}
+        <h4>{{ object.name }} {{ object.surname }} не состоит ни в один из отделов</h4>
+    {% endif %}
+    {% if events_table.data|length > 0 %}
+        <div class="card-body">
+            {% render_table events_table %}
+        </div>
+    {% else %}
+        <h4>{{ object.name }} {{ object.surname }} не участвует ни в одном из мероприятий</h4>
+    {% endif %}
 {% endblock %}

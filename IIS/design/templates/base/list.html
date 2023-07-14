@@ -7,14 +7,21 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row">
-                        {% block filter_fields %}{% endblock %}
-                        {% block search_fields %}{% endblock %}
-                        {% block add_button %}{% endblock %}
-                    </div>
-                    <div>
-                        {% render_table table %}
-                    </div>
+                    {% if table.data|length > 0 %}
+                        <div class="row">
+                            {% block filter_fields %}{% endblock %}
+                            {% block search_fields %}{% endblock %}
+                            {% block add_button1 %}{% endblock %}
+                        </div>
+                        <div>
+                            {% render_table table %}
+                        </div>
+                    {% else %}
+                        <div class="row">
+                            {% block add_button2 %}{% endblock %}
+                        </div>
+                        {% block empty_mess %}{% endblock %}
+                    {% endif %}
                 </div>
             </div>
         </div>

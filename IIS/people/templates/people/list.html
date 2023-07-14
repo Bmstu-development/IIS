@@ -24,7 +24,7 @@
         </div>
     </div>
 {% endblock %}
-{% block add_button %}
+{% block add_button1 %}
     {% if user.is_superuser %}
         <div class="mb-3 mr-3 col-md-2 offset-md-4">
             <div class="d-flex justify-content-end">
@@ -34,3 +34,12 @@
         </div>
     {% endif %}
 {% endblock %}
+{% block add_button2 %}
+    {% if user.is_superuser %}
+        <div class="d-flex justify-content-end">
+            <a href="{% url 'person_add' %}" class="btn btn-primary">Добавить нового
+                человека</a>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block empty_mess %}<h2>Еще не добавлен ни один человек</h2>{% endblock %}

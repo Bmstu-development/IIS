@@ -1,9 +1,11 @@
-from django_tables2 import SingleTableView
+from django_tables2 import SingleTableView, RequestConfig
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import DetailView, CreateView
 
 from . import models, tables
+from departments.tables import DepartmentsPersonTable
+from events.tables import EventsPersonTable
 
 
 class PersonViewFilterMixin:
@@ -50,10 +52,15 @@ class PersonDetailView(PersonViewFilterMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        pn = self.object
+        departments_table = DepartmentsPersonTable(data=pn.get_departments_list(), person_id=pn.id)
+        # RequestConfig(self.request).configure(departments_table)
+        events_table = EventsPersonTable(pn.get_events_list(), person_id=pn.id)
+        # RequestConfig(self.request).configure(events_table)
         context.update({
             'fields': self.object.get_fields().items(),
-            # 'departments': self.object.get_departments_list(),
-            # 'events': self.object.get_events_list(),
+            'departments_table': departments_table,
+            'events_table': events_table,
         })
         return context
 

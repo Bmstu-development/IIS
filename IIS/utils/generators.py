@@ -57,6 +57,10 @@ def generate_person(number):
         Person(
             name=choice(names[person_sex]),
             surname=choice(surnames[person_sex]),
-            patronymic=choice(patronymics[person_sex]),
-            organisation=choice(organisations)
+            patronymic=choice(patronymics[person_sex]) * choice([0, 1]),
+            organisation=choice(organisations),
+            bmstu_group='ИУ8-46' * choice([0, 1]),
+            phone_number='8(800)555-35-35' * choice([0, 1]),
+            tg_username='user_telegram' * choice([0, 1]),
+            is_user=bool(choice([0, 1])),
         ).save()
