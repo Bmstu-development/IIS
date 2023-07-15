@@ -53,14 +53,10 @@ class PersonDetailView(PersonViewFilterMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         pn = self.object
-        departments_table = DepartmentsPersonTable(data=pn.get_departments_list(), person_id=pn.id)
-        # RequestConfig(self.request).configure(departments_table)
-        events_table = EventsPersonTable(pn.get_events_list(), person_id=pn.id)
-        # RequestConfig(self.request).configure(events_table)
         context.update({
-            'fields': self.object.get_fields().items(),
-            'departments_table': departments_table,
-            'events_table': events_table,
+            'fields': pn.get_fields().items(),
+            'departments_table': DepartmentsPersonTable(pn.get_departments_list(), person_id=pn.id),
+            'events_table': EventsPersonTable(pn.get_events_list(), person_id=pn.id),
         })
         return context
 

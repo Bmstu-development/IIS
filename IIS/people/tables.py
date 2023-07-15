@@ -14,3 +14,14 @@ class PeopleTable(tables.Table):
         row_attrs = {
             'person-id': lambda record: record.pk
         }
+
+
+# class PeopleEventTable(tables.Table):
+#     actions = tables.TemplateColumn(template_name='people/cell_action.html', verbose_name='', orderable=False)
+#
+#     class Meta(TableStyleMeta):
+#         model = models.Person
+#         fields = 'surname', 'name', 'patronymic',
+#         row_attrs = {
+#             'person-id': lambda record: record.pk
+#         }

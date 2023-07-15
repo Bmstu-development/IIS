@@ -2,16 +2,58 @@
 
 {% load render_table from django_tables2 %}
 
+{% block page_title %}IIS | Отдел{% endblock %}
+{% block page_name %}{{ object.name }} {{ object.surname }}{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'departments_list' %}">Отделы</a>
+    </li>
+    <li class="breadcrumb-item active">Подробная информация</li>
+{% endblock %}
+
 {% block detail_table %}
+    <tr>
+        {{ object.get_last_changes_data }}
+    </tr>
     {% for field_name, field_value in fields %}
         <tr>
-            <th scope="row">{{ field_name }}</th>
+            <th scope="row" class="w-25">{{ field_name }}</th>
             <td>{{ field_value }}</td>
         </tr>
     {% endfor %}
+    <tr>
+        <th scope="row" class="w-25">Руководитель</th>
+        <td>{% if supervisor|first %}
+            <a href="{% url 'person_detail' supervisor|first %}">{{ supervisor|last }}</a>{% else %}Не
+            указан{% endif %}</td>
+    </tr>
 {% endblock %}
 {% block detail_additional %}
-    {% for act in object.get_activists_list %}
-        <div><a href="{% url 'person_detail' act.pk %}">{{ act }}</a></div>
-    {% endfor %}
+    <button type="button" class="btn btn-primary btn-md mb-3 mr-3">Редактировать</button>
+    <button type="button" class="btn btn-danger btn-md mb-3 mr-3">Удалить</button>
+    {% if activists_list.data|length > 0 %}
+        <div class="card mb-3 mr-3">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h2>Активисты</h2>
+                    </div>
+                    <div class="col-md-2 offset-md-7">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#id_activists_list" aria-expanded="false"
+                                    aria-controls="id_activists_list">-
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body collapse" id="id_activists_list">
+                {% render_table activists_list %}
+            </div>
+        </div>
+    {% else %}
+        <h4>В отделе нет активистов</h4>
+    {% endif %}
 {% endblock %}

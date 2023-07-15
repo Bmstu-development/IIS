@@ -7,6 +7,16 @@ from design.tables import TableStyleMeta
 class EventsTable(tables.Table):
     actions = tables.TemplateColumn(template_name='events/cell_action.html', verbose_name='', orderable=False)
 
+    def render_dt_start(self, value):
+        if not value:
+            return 'Не выбрана'
+        return value.strftime('%d.%m.%Y')
+
+    def render_dt_finish(self, value):
+        if not value:
+            return 'Не выбрана'
+        return value.strftime('%d.%m.%Y')
+
     class Meta(TableStyleMeta):
         model = models.Event
         fields = 'name', 'dt_start', 'dt_finish', 'status',

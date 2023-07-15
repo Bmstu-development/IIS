@@ -2,6 +2,7 @@ from django.views.generic import DetailView, CreateView
 from django_tables2 import SingleTableView
 
 from . import models, tables
+from people.tables import PeopleTable
 
 
 class EventsListView(SingleTableView):
@@ -25,8 +26,12 @@ class EventDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        ev = self.object
         context.update({
-            'fields': self.object.get_fields().items(),
+            'fields': ev.get_fields().items(),
+            'supervisors': {sv.id: sv for sv in ev.supervisors.all()}.items(),
+            'teachers': {tch.id: tch for tch in ev.teachers.all()}.items(),
+            'listeners_table': PeopleTable(ev.get_students_list()),
         })
         return context
 
