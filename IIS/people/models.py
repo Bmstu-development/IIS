@@ -148,6 +148,16 @@ class Person(models.Model):
             result = result.union(set(dp.activists.all().values_list(flat=True)))
         return list(result)
 
+    def is_supervisor(self):
+        """
+        Возвращает T/F в зависимости от того, является ли self руководителем какого-то отдела
+        :return: T/F
+        """
+        for dp in Department.objects.all():
+            if dp.supervisor_instance == self:
+                return True
+        return False
+
     def make_user(self):
         """
         Создает из персоны self пользователя. Автоматически генерирует логин и пароль, выполняет объекта пользователя

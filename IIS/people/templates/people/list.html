@@ -25,7 +25,7 @@
     </div>
 {% endblock %}
 {% block add_button1 %}
-    {% if user.is_superuser %}
+    {% if is_allowed_create %}
         <div class="mb-3 mr-3 col-md-2 offset-md-4">
             <div class="d-flex justify-content-end">
                 <a href="{% url 'person_add' %}" class="btn btn-primary">Добавить нового
@@ -35,7 +35,7 @@
     {% endif %}
 {% endblock %}
 {% block add_button2 %}
-    {% if user.is_superuser %}
+    {% if is_allowed_create %}
         <div class="d-flex justify-content-end">
             <a href="{% url 'person_add' %}" class="btn btn-primary">Добавить нового
                 человека</a>

@@ -52,8 +52,17 @@
     </tr>
 {% endblock %}
 {% block detail_additional %}
-    <button type="button" class="btn btn-primary btn-md mb-3 mr-3">Редактировать</button>
-    <button type="button" class="btn btn-danger btn-md mb-3 mr-3">Удалить</button>
+    {% if is_allowed_edit %}
+        <button type="button"
+                title="Изменить основную информацию о мероприятии, старосту, преподавателя или список слушателей"
+                class="btn btn-primary btn-md mb-3 mr-3">Редактировать
+        </button>
+    {% endif %}
+    {% if is_allowed_delete %}
+        <button type="button" title="Удалить всю информацию о мероприятии" class="btn btn-danger btn-md mb-3 mr-3">
+            Удалить
+        </button>
+    {% endif %}
     {% if listeners_table.data|length > 0 %}
         <div class="card mb-3 mr-3">
             <div class="card-header">

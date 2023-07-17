@@ -36,6 +36,7 @@ class DepartmentsPersonTable(tables.Table):
             return 'Активист'
         if department.supervisor_instance.id == self.__person_id:
             return 'Руководитель'
+        return 'Активист'
 
     class Meta(TableStyleMeta):
         model = models.Department

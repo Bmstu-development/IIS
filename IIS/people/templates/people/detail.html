@@ -28,13 +28,25 @@
     {% endfor %}
 {% endblock %}
 {% block detail_additional %}
-    <button type="button" class="btn btn-primary btn-md mb-3 mr-3">Редактировать</button>
-    {% if object.is_user %}
-        <button type="button" class="btn btn-danger btn-md mb-3 mr-3">Удалить пользователя</button>
-    {% else %}
-        <button type="button" class="btn btn-primary btn-md mb-3 mr-3">Сделать пользователем</button>
+    {% if is_allowed_edit %}
+        <button type="button" class="btn btn-primary btn-md mb-3 mr-3"
+                title="Изменить основную информацию о человеке, его привязку к мероприятиям и отделам">Редактировать
+        </button>
     {% endif %}
-    <button type="button" class="btn btn-danger btn-md mb-3 mr-3">Удалить</button>
+    {% if object.is_user and is_allowed_create_delete_user %}
+        <button type="button" class="btn btn-danger btn-md mb-3 mr-3"
+                title="Удалить пользователя, но оставить всю информацию">Удалить пользователя
+        </button>
+    {% elif is_allowed_create_delete_user %}
+        <button type="button" class="btn btn-primary btn-md mb-3 mr-3"
+                title="Разрешить человеку пользование системой, сгенерировать логин и пароль">Сделать пользователем
+        </button>
+    {% endif %}
+    {% if is_allowed_delete %}
+        <button type="button" class="btn btn-danger btn-md mb-3 mr-3"
+                title="Удалить всю основную информацию о человеке, его привязку к мероприятиям и отделам">Удалить
+        </button>
+    {% endif %}
     {% if departments_table.data|length > 0 %}
         <div class="card mb-3 mr-3">
             <div class="card-header">
