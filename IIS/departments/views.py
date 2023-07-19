@@ -1,7 +1,8 @@
 from django.views.generic import DetailView, CreateView
+from django.urls import reverse_lazy
 from django_tables2 import SingleTableView
 
-from . import models, tables
+from . import forms, models, tables
 from people.models import Person
 from people.tables import PeopleTable
 
@@ -21,7 +22,7 @@ class DepartmentDetailView(DetailView):
         dp = self.object
         user = self.request.user
         try:
-            is_supervisor = dp.supervisor_instance == Person.objects.get(user_instance=self)
+            is_supervisor = dp.supervisor_instance == Person.objects.get(user_instance=user)
         except Person.DoesNotExist:
             is_supervisor = False
         context.update({
@@ -36,4 +37,9 @@ class DepartmentDetailView(DetailView):
 
 
 class DepartmentAddView(CreateView):
-    pass
+    template_name = 'departments/create.html'
+    model = models.Department
+    form_class = forms.DepartmentAddForm
+
+    def get_success_url(self):
+        return reverse_lazy('departments_detail', kwargs={'pk': self.object.id})

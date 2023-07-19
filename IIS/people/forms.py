@@ -3,7 +3,7 @@ from django import forms
 from . import models
 
 
-class PersonCreateForm(forms.ModelForm):
+class PersonAddForm(forms.ModelForm):
     no_patronymic = forms.BooleanField(label='Без отчества', initial=False, required=False)
 
     def save(self, commit=True):

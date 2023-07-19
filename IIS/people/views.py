@@ -1,7 +1,6 @@
 from django_tables2 import SingleTableView
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-# from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, CreateView
 
 from . import forms, models, tables
@@ -86,11 +85,10 @@ class PersonDetailView(PersonViewFilterMixin, DetailView):
         return context
 
 
-# @method_decorator(name='post')
 class PersonAddView(CreateView):
     template_name = 'people/create.html'
     model = models.Person
-    form_class = forms.PersonCreateForm
+    form_class = forms.PersonAddForm
 
     def get_success_url(self):
         return reverse_lazy('person_detail', kwargs={'pk': self.object.id})

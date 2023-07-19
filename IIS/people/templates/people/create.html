@@ -19,7 +19,7 @@
                         преподавателя курса) или в отчетных таблицах (если вы добавляете активиста).<br>Данные, которые
                         будут в служебной записке на проход (фамилия, имя, отчество при наличии), сверяются с
                         паспортом при входе на территорию МГТУ.</p>
-                    <form method="POST" action="" class="" id="id_person_create_form" enctype="multipart/form-data">
+                    <form method="POST" action="" class="" id="id_person_add_form" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% bootstrap_field form.surname %}
                         {% bootstrap_field form.name %}

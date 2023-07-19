@@ -1,0 +1,36 @@
+{% extends 'base/create.html' %}
+{% load bootstrap5 %}
+
+{% block page_title %}IIS | Добавить отдел{% endblock %}
+{% block page_name %}Добавить новый отдел{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'departments_list' %}">Отделы</a>
+    </li>
+    <li class="breadcrumb-item active">Новый отдел</li>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <p>Введенные данные могут быть использованы в отчетных таблицах (название, описание, имя
+                        руководителя).</p>
+                    <form method="POST" action="" class="" id="id_department_add_form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        <div class="text-right mt-5 d-flex justify-content-between">
+                            <div>
+                                <a href="{% url 'departments_list' %}" class="btn btn-danger">Отмена</a>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-primary d-inline-block">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
