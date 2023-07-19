@@ -1,0 +1,51 @@
+{% extends 'base/create.html' %}
+{% load bootstrap5 %}
+
+{% block page_title %}IIS | Добавить человека{% endblock %}
+{% block page_name %}Добавить нового человека{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'people_list' %}">Люди</a>
+    </li>
+    <li class="breadcrumb-item active">Новый человек</li>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <p>Введенные данные будут использованы в служебных записках (если вы добавляете слушателя или
+                        преподавателя курса) или в отчетных таблицах (если вы добавляете активиста).<br>Данные, которые
+                        будут в служебной записке на проход (фамилия, имя, отчество при наличии), сверяются с
+                        паспортом при входе на территорию МГТУ.</p>
+                    <form method="POST" action="" class="" id="id_person_create_form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% bootstrap_field form.surname %}
+                        {% bootstrap_field form.name %}
+                        {% bootstrap_field form.patronymic %}
+                        {% bootstrap_field form.no_patronymic %}
+                        {% bootstrap_field form.organisation %}
+                        {% bootstrap_field form.bmstu_group %}
+                        {% bootstrap_field form.phone_number %}
+                        {% bootstrap_field form.tg_username %}
+                        <div><p>Прикрепление к отделам</p></div>
+                        <div><p>Прикрепление к мероприятиям</p></div>
+                        {% bootstrap_field form.is_user %}
+                        <div class="text-right mt-5 d-flex justify-content-between">
+                            <div>
+                                <a href="{% url 'people_list' %}" class="btn btn-danger">Отмена</a>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-primary d-inline-block">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block additional_js %}
+    <script src="/static/people/create.js"></script>
+{% endblock %}
