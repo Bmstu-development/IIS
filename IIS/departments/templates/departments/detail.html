@@ -32,12 +32,33 @@
 {% block detail_additional %}
     {% if is_allowed_edit %}
         <button type="button" class="btn btn-primary btn-md mb-3 mr-3"
-                title="Редактировать основную информацию об отделе, список активисто">Редактировать
+                title="Редактировать основную информацию об отделе, список активистов">Редактировать
         </button>
     {% endif %}
     {% if is_allowed_delete %}
-        <button type="button" class="btn btn-danger btn-md mb-3 mr-3" title="Удалить всю информацию об отделе">Удалить
+        <button type="button" class="btn btn-danger btn-md mb-3 mr-3" id="id-department-delete"
+                title="Удалить всю информацию об отделе" data-bs-toggle="modal" data-bs-target="#id_delete_modal">
+            Удалить
         </button>
+        <div class="modal fade" id="id_delete_modal" tabindex="-1" aria-labelledby="deleteModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Вы уверены, что хотите удалить этот отдел?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        После удаления отдела вся информация о нем будет стерта, руководитель и активисты потеряют свои
+                        права (если они были).
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <a href="{% url 'department_delete' object.id %}" class="btn btn-danger">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endif %}
     {% if activists_list.data|length > 0 %}
         <div class="card mb-3 mr-3">

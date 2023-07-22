@@ -25,7 +25,38 @@
                                 <a href="{% url 'departments_list' %}" class="btn btn-danger">Отмена</a>
                             </div>
                             <div>
-                                <button type="submit" class="btn btn-primary d-inline-block">Сохранить</button>
+                                <button type="button" class="btn btn-primary btn-md mb-3 mr-3" id="id-department-save"
+                                        data-bs-toggle="modal" data-bs-target="#id-save-modal">Сохранить
+                                </button>
+                                <div class="modal fade" id="id-save-modal" tabindex="-1"
+                                     aria-labelledby="saveModalLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="saveModalLabel">Вы уверены, что хотите
+                                                    продолжить?</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                После продолжения рекомендуется сделать выбранного руководителя
+                                                пользователем, тогда он автоматически получит право редактирования
+                                                отдела. Если указанный руководитель уже является пользователем, никакие
+                                                дополнительные требования не требуются.<br>
+                                                Выбранные активисты, которые являются пользователями или будут сделаны
+                                                активистами, получат уровень доступа, указанный ранее.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Отмена
+                                                </button>
+                                                <button type="submit" class="btn btn-primary d-inline-block">Сохранить
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>

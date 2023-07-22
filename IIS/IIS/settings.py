@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap5',
+    'bootstrap_modal_forms',
     'django_tables2',
     'rest_framework',
     'simple_history',

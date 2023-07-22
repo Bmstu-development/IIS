@@ -7,4 +7,5 @@ urlpatterns = [
     path('people/', views.PeopleListView.as_view(), name='people_list'),
     path('people/add', views.PersonAddView.as_view(), name='person_add'),
     path('people/<int:pk>', views.PersonDetailView.as_view(), name='person_detail'),
+    # path('people/<int:pk>/delete', views.PersonDeleteView.as_view(), name='person_delete'),
 ]

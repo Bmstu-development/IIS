@@ -1,6 +1,9 @@
+from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic import DetailView, CreateView
 from django.urls import reverse_lazy
 from django_tables2 import SingleTableView
+
+from bootstrap_modal_forms.generic import BSModalDeleteView
 
 from . import forms, models, tables
 from people.models import Person
@@ -36,10 +39,22 @@ class DepartmentDetailView(DetailView):
         return context
 
 
+def delete_department(request, pk):
+    try:
+        dp = models.Department.objects.get(id=pk)
+    except models.Department.DoesNotExist:
+        return HttpResponse(status=404)
+    if request.user.is_superuser:
+        dp.delete()
+        # TODO: забрать у активистов права
+        return HttpResponseRedirect(reverse_lazy('departments_list'))
+    return HttpResponse(status=404)
+
+
 class DepartmentAddView(CreateView):
     template_name = 'departments/create.html'
     model = models.Department
     form_class = forms.DepartmentAddForm
 
     def get_success_url(self):
-        return reverse_lazy('departments_detail', kwargs={'pk': self.object.id})
+        return reverse_lazy('department_detail', kwargs={'pk': self.object.id})
