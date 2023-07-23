@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic import DetailView, CreateView
 from django.urls import reverse_lazy
 from django_tables2 import SingleTableView
+from django.contrib.auth.models import Group
 
 from bootstrap_modal_forms.generic import BSModalDeleteView
 
@@ -45,8 +46,17 @@ def delete_department(request, pk):
     except models.Department.DoesNotExist:
         return HttpResponse(status=404)
     if request.user.is_superuser:
+        for pn in dp.activists.all():
+            if not pn.is_user:
+                continue
+            usr = pn.user_instance
+            usr.groups.remove(Group.objects.get(name=models.Department.CRUD))
+            usr.groups.remove(Group.objects.get(name=models.Department.READONLY))
+            for dp in pn.get_departments_list():
+                if dp.permissions == models.Department.NONE:
+                    continue
+                Group.objects.get(name=dp.permissions).user_set.add(usr)
         dp.delete()
-        # TODO: забрать у активистов права
         return HttpResponseRedirect(reverse_lazy('departments_list'))
     return HttpResponse(status=404)
 
