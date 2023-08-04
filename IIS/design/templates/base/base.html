@@ -32,12 +32,14 @@
     {% endblock %}
     {% block additional_js %}{% endblock %}
 </head>
-<body class="{% block body_class %}hold-transition sidebar-mini layout-fixed{% endblock %} h-custom">
+<body class="{% block body_class %}hold-transition sidebar-mini layout-fixed{% endblock %} h-custom"
+      style="display: flex; flex-direction: column;">
 {% block body %}
-    <div class="wrapper">
+    <div class="wrapper" style="display: flex; flex-direction: column; flex-grow: 1;">
         <div>{% include 'base/header.html' %}</div>
         {#        <div class="menu-wrapper">{% include 'base/menu.html' %}</div>#}
-        <div class="content-wrapper" style="background-color: #e9ecef">
+        <div class="content-wrapper"
+             style="background-color: #e9ecef; display: flex; flex-grow: 1; flex-direction: column;">
             {% block content_header %}
                 <div class="content-header">
                     <div class="container-fluid">
@@ -62,14 +64,6 @@
                 </div>
             </section>
         </div>
-        {#        <footer style="border-top: 1px solid #dee2e6;#}
-        {#            color: #869099;#}
-        {#            padding: 1rem;#}
-        {#            background-color: #fff;">#}
-        {#            <div class="container">#}
-        {#                {% include 'base/footer.html' %}#}
-        {#            </div>#}
-        {#        </footer>#}
         <div class="flex-colum text-center py-4 px-4 px-xl-5" style="background-color: white">
             {% include 'base/footer.html' %}
         </div>
