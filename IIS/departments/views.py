@@ -1,4 +1,5 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.forms.models import model_to_dict
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views.generic import DetailView, CreateView
 from django.urls import reverse_lazy
 from django_tables2 import SingleTableView
@@ -65,6 +66,24 @@ class DepartmentAddView(CreateView):
     template_name = 'departments/create.html'
     model = models.Department
     form_class = forms.DepartmentAddForm
+
+    # def post(self, request, *args, **kwargs):
+    #     print('in form post!')
+    #     print(self)
+    #     print(request)
+    #
+    #     form = forms.DepartmentAddForm(self.request.POST)
+    #     if form.is_valid():
+    #         print(form.cleaned_data)
+    #         dp = form.save(commit=False)
+    #         dp.name = form.cleaned_data['name']
+    #         dp.descr = form.cleaned_data['descr']
+    #         dp.permissions = form.cleaned_data['permissions']
+    #         print(model_to_dict(dp))
+    #         return reverse_lazy('department_delete', kwargs={'pk': dp.pk})
+    #     return
+    #     # answer['error'] = form.errors
+    #     # return self.request.META.get('HTTP_REFERER')
 
     def get_success_url(self):
         return reverse_lazy('department_detail', kwargs={'pk': self.object.id})

@@ -16,7 +16,7 @@ class DepartmentsTable(tables.Table):
         }
 
 
-class DepartmentsPersonTable(tables.Table):
+class DepartmentsActivistsTable(tables.Table):
     person_status = tables.Column(verbose_name='Статус', empty_values=())
     descr = tables.Column(verbose_name='Описание', orderable=False)
     actions = tables.TemplateColumn(template_name='departments/cell_action.html', verbose_name='', orderable=False)

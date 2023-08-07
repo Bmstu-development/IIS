@@ -5,7 +5,7 @@ from django.views.generic import DetailView, CreateView
 
 from . import forms, models, tables
 from departments.models import Department
-from departments.tables import DepartmentsPersonTable
+from departments.tables import DepartmentsActivistsTable
 from events.tables import EventsPersonTable
 
 
@@ -75,7 +75,7 @@ class PersonDetailView(PersonViewFilterMixin, DetailView):
         is_crud_allowed = Department.CRUD in user.groups.all().values_list('name', flat=True)
         context.update({
             'fields': pn.get_fields().items(),
-            'departments_table': DepartmentsPersonTable(pn.get_departments_list(), person_id=pn.id),
+            'departments_table': DepartmentsActivistsTable(pn.get_departments_list(), person_id=pn.id),
             'events_table': EventsPersonTable(pn.get_events_list(), person_id=pn.id),
             'is_allowed_delete': user.is_superuser or (not pn.is_user and is_crud_allowed) or is_subordinate,
             'is_allowed_edit': pn.user_instance == user or user.is_superuser or is_subordinate or (

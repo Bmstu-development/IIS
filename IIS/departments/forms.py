@@ -1,11 +1,15 @@
 from django import forms
 from django.contrib.auth.models import Group
 
-from . import models, widgets
+from . import models
 from people.models import Person
 
 
 class DepartmentAddForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.people = Person.objects.all()
+
     name = forms.CharField(
         label='Название',
         help_text='Введенное название будет считаться официальным названием отдела',
@@ -38,25 +42,21 @@ class DepartmentAddForm(forms.ModelForm):
         required=False,
     )
 
-    activists = forms.ModelMultipleChoiceField(
-        label='Активисты',
-        queryset=Person.objects.all(),
-        widget=widgets.CheckboxSelectMultiple,
-        # widget=widgets.DepartmentActivistsChoiceWidget,
-        required=False,
-    )
-
     def save(self, commit=True):
         instance = super().save(commit=False)
+        print('in form save')
+        print(instance)
+        print(self.cleaned_data)
         if commit:
-            instance.save()
-            self.save_m2m()
-            for pn in instance.activists.all():
-                if pn.user_instance is None:
-                    continue
-                Group.objects.get(name=instance.permissions).user_set.add(pn.user_instance)
+            pass
+            # instance.save()
+            # self.save_m2m()
+            # for pn in instance.activists.all():
+            #     if pn.user_instance is None:
+            #         continue
+            #     Group.objects.get(name=instance.permissions).user_set.add(pn.user_instance)
         return instance
 
     class Meta:
         model = models.Department
-        fields = 'name', 'descr', 'permissions', 'supervisor_instance', 'activists'
+        fields = 'name', 'descr', 'permissions', 'supervisor_instance',
