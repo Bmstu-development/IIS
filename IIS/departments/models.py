@@ -1,5 +1,7 @@
 from simple_history.models import HistoricalRecords
 
+from datetime import timezone
+
 from django.db import models
 
 
@@ -62,8 +64,6 @@ class Department(models.Model):
         fields = ['name', 'descr']
         for field in fields:
             dct[self._meta.get_field(field).verbose_name] = getattr(self, field)
-        dct[self._meta.get_field('supervisor_instance').verbose_name] = str(
-            self.supervisor_instance) if self.supervisor_instance else 'Не указан'
         return dct
 
     def get_activists_list(self):
@@ -72,3 +72,18 @@ class Department(models.Model):
         :return:
         """
         return self.activists.all()
+
+    def get_last_changes_data(self):
+        """
+
+        :return:
+        """
+        change_date = self.history.all().first().history_date.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        change_date = change_date.strftime('%d.%m.%Y %H:%M')
+        change_person = self.history.all().first().history_user
+        output = f'Последнее изменение: {change_date}'
+        if not change_person:
+            return output
+        if change_person.get_full_name():
+            return output + f', выполнено пользователем {change_person.get_full_name()}'
+        return output + f', выполнено пользователем {change_person.username}'

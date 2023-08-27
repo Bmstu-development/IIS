@@ -1,9 +1,45 @@
-{% extends 'base.html' %}
-{% load static %}
-{% load render_table from django_tables2 %}
+{% extends 'base/list.html' %}
 
-{% block title %}People list{% endblock %}
+{% block page_title %}IIS | Люди{% endblock %}
+{% block page_name %}Люди{% endblock %}
 
-{% block content %}
-    {% render_table table %}
+{% block filter_fields %}
+    <div class="col-md-3">
+        <div class="input-group mb-3 mr-3">
+            <select class="form-select">
+                <option value="0" selected>Все</option>
+                <option value="1">Активисты</option>
+                <option value="2">Преподаватели</option>
+                <option value="3">Слушатели</option>
+            </select>
+            <button class="btn btn-primary" type="button">Фильтр</button>
+        </div>
+    </div>
 {% endblock %}
+{% block search_fields %}
+    <div class="col-md-3">
+        <div class="input-group mb-3 mr-3">
+            <input type="text" class="form-control" placeholder="Введите имя, фамилию или отчество">
+            <button class="btn btn-primary" type="button" id="id_search_button">Поиск</button>
+        </div>
+    </div>
+{% endblock %}
+{% block add_button1 %}
+    {% if is_allowed_create %}
+        <div class="mb-3 mr-3 col-md-2 offset-md-4">
+            <div class="d-flex justify-content-end">
+                <a href="{% url 'person_add' %}" class="btn btn-primary">Добавить нового
+                    человека</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block add_button2 %}
+    {% if is_allowed_create %}
+        <div class="d-flex justify-content-end">
+            <a href="{% url 'person_add' %}" class="btn btn-primary">Добавить нового
+                человека</a>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block empty_mess %}<h2>Еще не добавлен ни один человек</h2>{% endblock %}

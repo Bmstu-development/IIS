@@ -44,10 +44,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap5',
+    'bootstrap_modal_forms',
     'django_tables2',
     'rest_framework',
     'simple_history',
+    'accounts.apps.AccountsConfig',
     'departments.apps.DepartmentsConfig',
+    'design.apps.DesignConfig',
     'events.apps.EventsConfig',
     'people.apps.PeopleConfig',
 ]
@@ -72,7 +76,7 @@ ROOT_URLCONF = 'IIS.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'design/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -148,13 +152,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'start_page'
+LOGIN_REDIRECT_URL = 'people_list'
 LOGOUT_REDIRECT_URL = 'login'
 OPEN_URLS = [
     'logout',

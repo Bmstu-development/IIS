@@ -1,3 +1,26 @@
+{#{% load static %}#}
+{##}
+{#<link rel="stylesheet" href="../../static/css/menu.css">#}
+{#<input type="checkbox" id="nav-toggle" hidden>#}
+{#<nav class="nav">#}
+{#    <label for="nav-toggle" class="nav-toggle" onclick></label>#}
+{#    <h2 class="logo">#}
+{#        <a href="">ISCRA Information System</a>#}
+{#    </h2>#}
+{#    <ul>#}
+{#        <li><a href="{% url 'people_list' %}">Люди</a>#}
+{#        <li><a href="{% url 'events_list' %}">Мероприятия</a>#}
+{#        <li><a href="{% url 'departments_list' %}">Отделы</a>#}
+{#        <li style="bottom: 0; position: fixed;"><a href="{% url 'profile' %}">#}
+{#            {% if user.get_full_name %}#}
+{#                {{ user.get_full_name }}#}
+{#            {% else %}#}
+{#                {{ user.username }}#}
+{#            {% endif %}#}
+{#        </a>#}
+{#    </ul>#}
+{#</nav>#}
+
 {% load static %}
 
 <style>
@@ -35,5 +58,11 @@
     <a href="{% url 'people_list' %}">Люди</a>
     <a href="{% url 'events_list' %}">Мероприятия</a>
     <a href="{% url 'departments_list' %}">Отделы</a>
-    <div style="color: #ffffff; bottom: 0; position: fixed;">{{ user.username }}</div>
+    <a href="{% url 'profile' %}" style="bottom: 0; position: fixed;">
+        {% if user.get_full_name %}
+            {{ user.get_full_name }}
+        {% else %}
+            {{ user.username }}
+        {% endif %}
+    </a>
 </div>

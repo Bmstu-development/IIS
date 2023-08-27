@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-3 mr-3">
+                <div class="card-body">
+                    {% if table.data|length > 0 %}
+                        <div class="row">
+                            {% block filter_fields %}{% endblock %}
+                            {% block search_fields %}{% endblock %}
+                            {% block add_button1 %}{% endblock %}
+                        </div>
+                        <div>
+                            {% render_table table %}
+                        </div>
+                    {% else %}
+                        <div class="row">
+                            {% block add_button2 %}{% endblock %}
+                        </div>
+                        {% block empty_mess %}{% endblock %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block additional_js %}
+    <script>
+        $(function () {
+            $('.previous').children().first().html('<span aria-hidden="true">«</span>');
+            $('.next').children().first().html('<span aria-hidden="true">»</span>');
+        })
+    </script>
+{% endblock %}

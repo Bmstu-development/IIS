@@ -1,17 +1,87 @@
-{% extends 'detail.html' %}
+{% extends 'base/detail.html' %}
 
 {% load render_table from django_tables2 %}
 
+{% block page_title %}IIS | Отдел{% endblock %}
+{% block page_name %}{{ object.name }} {{ object.surname }}{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'departments_list' %}">Отделы</a>
+    </li>
+    <li class="breadcrumb-item active">Подробная информация</li>
+{% endblock %}
+
 {% block detail_table %}
+    <tr>
+        {{ object.get_last_changes_data }}
+    </tr>
     {% for field_name, field_value in fields %}
         <tr>
-            <th scope="row">{{ field_name }}</th>
+            <th scope="row" class="w-25">{{ field_name }}</th>
             <td>{{ field_value }}</td>
         </tr>
     {% endfor %}
+    <tr>
+        <th scope="row" class="w-25">Руководитель</th>
+        <td>{% if supervisor|first %}
+            <a href="{% url 'person_detail' supervisor|first %}">{{ supervisor|last }}</a>{% else %}Не
+            указан{% endif %}</td>
+    </tr>
 {% endblock %}
 {% block detail_additional %}
-    {% for act in object.get_activists_list %}
-        <div><a href="{% url 'person_detail' act.pk %}">{{ act }}</a></div>
-    {% endfor %}
+    {% if is_allowed_edit %}
+        <button type="button" class="btn btn-primary btn-md mb-3 mr-3"
+                title="Редактировать основную информацию об отделе, список активистов">Редактировать
+        </button>
+    {% endif %}
+    {% if is_allowed_delete %}
+        <button type="button" class="btn btn-danger btn-md mb-3 mr-3" id="id-department-delete"
+                title="Удалить всю информацию об отделе" data-bs-toggle="modal" data-bs-target="#id_delete_modal">
+            Удалить
+        </button>
+        <div class="modal fade" id="id_delete_modal" tabindex="-1" aria-labelledby="deleteModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Вы уверены, что хотите удалить этот отдел?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        После удаления отдела вся информация о нем будет стерта, руководитель и активисты потеряют свои
+                        права (если они были).
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <a href="{% url 'department_delete' object.id %}" class="btn btn-danger">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if activists_list.data|length > 0 %}
+        <div class="card mb-3 mr-3">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h2>Активисты</h2>
+                    </div>
+                    <div class="col-md-2 offset-md-7">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#id_activists_list" aria-expanded="false"
+                                    aria-controls="id_activists_list">-
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body collapse" id="id_activists_list">
+                {% render_table activists_list %}
+            </div>
+        </div>
+    {% else %}
+        <h4>В отделе нет активистов</h4>
+    {% endif %}
 {% endblock %}

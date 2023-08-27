@@ -1,21 +1,203 @@
-{% extends 'detail.html' %}
+{% extends 'base/detail.html' %}
 
 {% load render_table from django_tables2 %}
 
+{% block page_title %}IIS | Человек{% endblock %}
+{% block page_name %}{{ object.name }} {{ object.surname }}{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'people_list' %}">Люди</a>
+    </li>
+    <li class="breadcrumb-item active">Подробная информация</li>
+{% endblock %}
+
 {% block detail_table %}
+    <tr>
+        {{ object.get_last_changes_data }}
+    </tr>
     {% for field_name, field_value in fields %}
         <tr>
-            <th scope="row">{{ field_name }}</th>
-            <td>{{ field_value }}</td>
+            <th scope="row" class="w-25">{{ field_name }}</th>
+            {% if field_name == 'Тег в телеграме' and field_value != 'Не указан' %}
+                <td><a href="https://t.me/{{ field_value }}">@{{ field_value }}</a></td>
+            {% else %}
+                <td>{{ field_value }}</td>
+            {% endif %}
         </tr>
     {% endfor %}
 {% endblock %}
 {% block detail_additional %}
-    {% for dep in object.get_departments_list %}
-        <div><a href="{% url 'departments_detail' dep.pk %}">{{ dep }}</a></div>
-    {% endfor %}
-    <div style="margin-top: 15px"></div>
-    {% for ev in object.get_events_list %}
-        <div><a href="{% url 'event_detail' ev.pk %}">{{ ev }}</a></div>
-    {% endfor %}
+    {% if is_allowed_edit %}
+        <button type="button" class="btn btn-primary btn-md mb-3 mr-3"
+                title="Изменить основную информацию о человеке, его привязку к мероприятиям и отделам">Редактировать
+        </button>
+    {% endif %}
+    {% if object.is_user and is_allowed_create_delete_user %}
+        <button type="button" class="btn btn-danger btn-md mb-3 mr-3"
+                title="Удалить пользователя, но оставить всю информацию" data-bs-toggle="modal"
+                data-bs-target="#id-delete-user-modal">Удалить пользователя
+        </button>
+        <div class="modal fade" id="id-delete-user-modal" tabindex="-1"
+             aria-labelledby="saveModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="saveModalLabel">Вы уверены, что хотите удалить этого
+                            пользователя?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Пользователь будет удален и больше не сможет пользоваться системой. Основная информация о
+                        человеке будет сохранена.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Отмена
+                        </button>
+                        <button type="button" class="btn btn-danger d-inline-block"
+                                id="id-create-user" onclick="deleteUser()">Удалить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% elif is_allowed_create_delete_user %}
+        <button type="button" class="btn btn-primary btn-md mb-3 mr-3" id="id-create-user"
+                title="Разрешить человеку пользование системой, сгенерировать логин и пароль" data-bs-toggle="modal"
+                data-bs-target="#id-create-user-modal">
+            Сделать пользователем
+        </button>
+        <div class="modal fade" id="id-create-user-modal" tabindex="-1"
+             aria-labelledby="saveModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="saveModalLabel">Вы уверены, что хотите
+                            сделать этого человека пользователем?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        При выборе "Продолжить" данные о человеке сохранятся, также будет сгенерирована пара
+                        логин-пароль. Эти данные позволят пользователю авторизоваться в системе.<br>
+                        Права нового пользователя определяются отделами, в которые он входит. Права можно изменить,
+                        изменив список отделов.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Отмена
+                        </button>
+                        <button type="button" class="btn btn-primary d-inline-block"
+                                id="id-create-user" onclick="createUser()">Продолжить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="id-logpass-modal" tabindex="-1"
+             aria-labelledby="saveModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="saveModalLabel">Логин, пароль нового
+                            пользователя</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Эти данные отображаются единожды. Передайте их пользователю по защищенному каналу связи.<br>
+                        После получения рекомендуется сменить пароль.<br>
+                        Логин: login_data<br>
+                        Пароль: 3ju3ghoign3po
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary d-inline-block" id="id-confirm">
+                            Подтвердить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if is_allowed_delete %}
+        <button type="button" class="btn btn-danger btn-md mb-3 mr-3" id="id-person-delete"
+                title="Удалить всю информацию о человеке" data-bs-toggle="modal" data-bs-target="#id_delete_modal">
+            Удалить
+        </button>
+        <div class="modal fade" id="id_delete_modal" tabindex="-1" aria-labelledby="deleteModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Вы уверены, что хотите всю информацию об этом
+                            человеке?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        После удаления все основная информация, привязка к отделам и мероприятиям будет удалена.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <a href="{% url 'person_delete' object.id %}" class="btn btn-danger">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if departments_table.data|length > 0 %}
+        <div class="card mb-3 mr-3">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h2>Отделы</h2>
+                    </div>
+                    <div class="col-md-2 offset-md-7">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#id_department_table" aria-expanded="false"
+                                    aria-controls="id_department_table">-
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body collapse" id="id_department_table">
+                {% render_table departments_table %}
+            </div>
+        </div>
+    {% else %}
+        <h4>{{ object.name }} {{ object.surname }} не состоит ни в одном из отделов</h4>
+    {% endif %}
+    {% if events_table.data|length > 0 %}
+        <div class="card mb-3 mr-3">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h2>Мероприятия</h2>
+                    </div>
+                    <div class="col-md-2 offset-md-7">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-tool" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#id_event_table" aria-expanded="false"
+                                    aria-controls="id_event_table">-
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body collapse" id="id_event_table">
+                {% render_table events_table %}
+            </div>
+        </div>
+    {% else %}
+        <h4>{{ object.name }} {{ object.surname }} не участвует ни в одном из мероприятий</h4>
+    {% endif %}
+{% endblock %}
+{% block additional_js %}
+    <script src="/static/people/detail.js"></script>
 {% endblock %}

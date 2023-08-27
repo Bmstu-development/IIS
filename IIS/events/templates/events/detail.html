@@ -1,17 +1,90 @@
-{% extends 'detail.html' %}
+{% extends 'base/detail.html' %}
 
 {% load render_table from django_tables2 %}
 
+{% block page_title %}IIS | Мероприятия{% endblock %}
+{% block page_name %}{{ object.name }}{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'events_list' %}">Мероприятия</a>
+    </li>
+    <li class="breadcrumb-item active">Подробная информация</li>
+{% endblock %}
+
 {% block detail_table %}
+    <tr>
+        {{ object.get_last_changes_data }}
+    </tr>
     {% for field_name, field_value in fields %}
         <tr>
-            <th scope="row">{{ field_name }}</th>
+            <th scope="row" class="w-25">{{ field_name }}</th>
             <td>{{ field_value }}</td>
         </tr>
     {% endfor %}
+    <tr>
+        {% if supervisors|length == 0 %}
+            <th scope="row" class="w-25">Староста</th>
+            <td>Не выбран</td>
+        {% elif supervisors|length == 1 %}
+            <th scope="row" class="w-25">Староста</th>
+            <td>{% for pk, supervisor in supervisors %}
+                <a href="{% url 'person_detail' pk %}">{{ supervisor }}</a>{% endfor %}</td>
+        {% else %}
+            <th scope="row" class="w-25">Старосты</th>
+            <td>{% for pk, supervisor in supervisors %}{% if forloop.counter > 1 %},{% endif %}
+                <a href="{% url 'person_detail' pk %}">{{ supervisor }}</a>{% endfor %}</td>
+        {% endif %}
+    </tr>
+    <tr>
+        {% if teachers|length == 0 %}
+            <th scope="row" class="w-25">Преподаватель</th>
+            <td>Не выбран</td>
+        {% elif teachers|length == 1 %}
+            <th scope="row" class="w-25">Преподаватель</th>
+            <td>{% for pk, teacher in teachers %}
+                <a href="{% url 'person_detail' pk %}">{{ teacher }}</a>{% endfor %}</td>
+        {% else %}
+            <th scope="row" class="w-25">Преподаватели</th>
+            <td>{% for pk, teacher in teachers %}{% if forloop.counter > 1 %},{% endif %}
+                <a href="{% url 'person_detail' pk %}">{{ teacher }}</a>{% endfor %}</td>
+        {% endif %}
+    </tr>
 {% endblock %}
 {% block detail_additional %}
-    {% for st in object.get_students_list %}
-        <div><a href="{% url 'person_detail' st.pk %}">{{ st }}</a></div>
-    {% endfor %}
+    {% if is_allowed_edit %}
+        <button type="button"
+                title="Изменить основную информацию о мероприятии, старосту, преподавателя или список слушателей"
+                class="btn btn-primary btn-md mb-3 mr-3">Редактировать
+        </button>
+    {% endif %}
+    {% if is_allowed_delete %}
+        <button type="button" title="Удалить всю информацию о мероприятии" class="btn btn-danger btn-md mb-3 mr-3">
+            Удалить
+        </button>
+    {% endif %}
+    {% if listeners_table.data|length > 0 %}
+        <div class="card mb-3 mr-3">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h2>Слушатели</h2>
+                    </div>
+                    <div class="col-md-2 offset-md-7">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#id_listeners_table" aria-expanded="false"
+                                    aria-controls="id_listeners_table">-
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body collapse" id="id_listeners_table">
+                {% render_table listeners_table %}
+            </div>
+        </div>
+    {% else %}
+        <h4>На мероприятие еще никто не зарегистрирован</h4>
+    {% endif %}
 {% endblock %}

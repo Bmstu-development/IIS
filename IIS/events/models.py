@@ -2,6 +2,8 @@ from simple_history.models import HistoricalRecords
 
 from django.db import models
 
+from datetime import timezone
+
 from departments.models import Department
 
 
@@ -57,11 +59,30 @@ class Event(models.Model):
 
     def get_fields(self):
         dct = dict()
+
         fields = ['name', 'descr', 'dt_start', 'dt_finish', 't_start', 't_finish', 'frequently', 'audience_num']
+        fields_to_hide_if_none = ['descr']
+        fields_to_replace_if_none = {
+            'dt_start': 'Не выбрана',
+            'dt_finish': 'Не выбрана',
+            't_start': 'Не выбрано',
+            't_finish': 'Не выбрано',
+            'frequently': 'Не выбрана',
+            'audience_num': 'Не выбрана',
+        }
+        fields_date = ['dt_start', 'dt_finish']
+        fields_time = ['t_start', 't_finish']
         for field in fields:
-            dct[self._meta.get_field(field).verbose_name] = getattr(self, field)
-        dct[self._meta.get_field('teachers').verbose_name] = ', '.join([str(p) for p in self.get_teachers_list()])
-        dct[self._meta.get_field('supervisors').verbose_name] = ', '.join([str(p) for p in self.get_supervisors_list()])
+            field_value = getattr(self, field)
+            if field in fields_to_hide_if_none and not field_value:
+                continue
+            if field in fields_to_replace_if_none and not field_value:
+                field_value = fields_to_replace_if_none[field]
+            elif field in fields_date:
+                field_value = field_value.strftime('%d.%m.%Y')
+            elif field in fields_time:
+                field_value = field_value.strftime('%H:%M')
+            dct[self._meta.get_field(field).verbose_name] = field_value
         return dct
 
     def get_teachers_list(self):
@@ -84,3 +105,18 @@ class Event(models.Model):
         :return:
         """
         return self.listeners.all()
+
+    def get_last_changes_data(self):
+        """
+
+        :return:
+        """
+        change_date = self.history.all().first().history_date.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        change_date = change_date.strftime('%d.%m.%Y %H:%M')
+        change_person = self.history.all().first().history_user
+        output = f'Последнее изменение: {change_date}'
+        if not change_person:
+            return output
+        if change_person.get_full_name():
+            return output + f', выполнено пользователем {change_person.get_full_name()}'
+        return output + f', выполнено пользователем {change_person.username}'

@@ -1,14 +1,15 @@
 # IIS
 ISCRA Information System</br>
 Приложения:
-* ~~accounts - авторизация в системе~~
+* accounts - авторизация в системе
 * departments - отделы
 * events - мероприятия 
 * people - люди
 </br>
 
 Фикстуры:
-* users.json (пользователь admin, пароль 8Xgex7E6CRCF4wz)
+* `users.json` (пользователь `admin`, пароль `8Xgex7E6CRCF4wz`)
+* `groups.json` (группы `crud`, `readonly`, `none`, определяющие права пользователей)
 
 API:
 * /api/v1/people/ - список людей

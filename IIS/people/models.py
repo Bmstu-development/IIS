@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User, Group
 
+from datetime import timezone
+
 from departments.models import Department
 from events.models import Event
 from utils.converters import latinize
@@ -47,13 +49,13 @@ class Person(models.Model):
     name = models.CharField(verbose_name='Имя')
     patronymic = models.CharField(verbose_name='Отчество', blank=True, null=True)
     organisation = models.CharField(verbose_name='Организация')
-    bmstu_group = models.CharField(verbose_name='Учебная группа (МГТУ)', blank=True, null=True)
+    bmstu_group = models.CharField(verbose_name='Учебная группа (МГТУ)', blank=True, null=False)
     phone_number = models.CharField(verbose_name='Телефонный номер', blank=True, null=False)
     tg_username = models.CharField(verbose_name='Тег в телеграме', blank=True, null=False)
     is_user = models.BooleanField(verbose_name='Является ли пользователем', default=False)
     user_instance = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='ID пользователя',
                                       on_delete=models.SET_NULL, blank=True, null=True)
-    history = HistoricalRecords()  # Person.objects.get(id=1).history.all().first().history_date / ...history_user
+    history = HistoricalRecords()
 
     objects = PersonManager()
 
@@ -74,8 +76,22 @@ class Person(models.Model):
 
         fields = ['surname', 'name', 'patronymic', 'organisation', 'bmstu_group', 'phone_number', 'tg_username',
                   'is_user']
+        fields_to_hide_if_none = ['bmstu_group']
+        fields_to_replace_if_none = {
+            'patronymic': 'Без отчества',
+            'phone_number': 'Не указан',
+            'tg_username': 'Не указан',
+        }
+        fields_boolean = ['is_user']
         for field in fields:
-            dct[self._meta.get_field(field).verbose_name] = getattr(self, field)
+            field_value = getattr(self, field)
+            if field in fields_to_hide_if_none and not field_value:
+                continue
+            if field in fields_to_replace_if_none and not field_value:
+                field_value = fields_to_replace_if_none[field]
+            if field in fields_boolean:
+                field_value = 'Да' if field_value else 'Нет'
+            dct[self._meta.get_field(field).verbose_name] = field_value
         return dct
 
     def get_departments_list(self):
@@ -132,6 +148,16 @@ class Person(models.Model):
             result = result.union(set(dp.activists.all().values_list(flat=True)))
         return list(result)
 
+    def is_supervisor(self):
+        """
+        Возвращает T/F в зависимости от того, является ли self руководителем какого-то отдела
+        :return: T/F
+        """
+        for dp in Department.objects.all():
+            if dp.supervisor_instance == self:
+                return True
+        return False
+
     def make_user(self):
         """
         Создает из персоны self пользователя. Автоматически генерирует логин и пароль, выполняет объекта пользователя
@@ -164,6 +190,9 @@ class Person(models.Model):
         self.save()
         return password
 
+    # def make_user(self, login, password):
+    #     pass
+
     def delete_user(self):
         """
         Удаляет пользователя, связанного с персоной self
@@ -176,3 +205,18 @@ class Person(models.Model):
         self.user_instance = None
         self.is_user = False
         self.save()
+
+    def get_last_changes_data(self):
+        """
+
+        :return:
+        """
+        change_date = self.history.all().first().history_date.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        change_date = change_date.strftime('%d.%m.%Y %H:%M')
+        change_person = self.history.all().first().history_user
+        output = f'Последнее изменение: {change_date}'
+        if not change_person:
+            return output
+        if change_person.get_full_name():
+            return output + f', выполнено пользователем {change_person.get_full_name()}'
+        return output + f', выполнено пользователем {change_person.username}'

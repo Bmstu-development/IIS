@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(verbose_name='Имя')),
                 ('patronymic', models.CharField(blank=True, null=True, verbose_name='Отчество')),
                 ('organisation', models.CharField(verbose_name='Организация')),
-                ('bmstu_group', models.CharField(blank=True, null=True, verbose_name='Учебная группа (МГТУ)')),
+                ('bmstu_group', models.CharField(blank=True, null=False, verbose_name='Учебная группа (МГТУ)')),
                 ('phone_number', models.CharField(blank=True, verbose_name='Телефонный номер')),
                 ('tg_username', models.CharField(blank=True, verbose_name='Тег в телеграме')),
                 ('departments', models.ManyToManyField(blank=True, default=[], related_name='person_department_match',

@@ -1,0 +1,183 @@
+{% extends 'base/create.html' %}
+{% load bootstrap5 %}
+
+{% block page_title %}IIS | Добавить человека{% endblock %}
+{% block page_name %}Добавить нового человека{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'people_list' %}">Люди</a>
+    </li>
+    <li class="breadcrumb-item active">Новый человек</li>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-3 mr-3">
+                <div class="card-body">
+                    <p>Введенные данные будут использованы в служебных записках (если вы добавляете слушателя или
+                        преподавателя курса) или в отчетных таблицах (если вы добавляете активиста).<br>Данные, которые
+                        будут в служебной записке на проход (фамилия, имя, отчество при наличии), сверяются с
+                        паспортом при входе на территорию МГТУ.</p>
+                    <form method="POST" action="" class="" id="id_person_add_form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% bootstrap_field form.surname %}
+                        {% bootstrap_field form.name %}
+                        {% bootstrap_field form.patronymic %}
+                        {% bootstrap_field form.no_patronymic %}
+                        {% bootstrap_field form.organisation %}
+                        {% bootstrap_field form.bmstu_group %}
+                        {% bootstrap_field form.phone_number %}
+                        {% bootstrap_field form.no_phone_number %}
+                        {% bootstrap_field form.tg_username %}
+                        {% bootstrap_field form.no_tg_username %}
+                        <div id="id-departments-cart" class="mb-3">
+                            <label class="form-label">Отделы</label>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col" style="width: 3%"></th>
+                                                <th scope="col">Название</th>
+                                                <th scope="col">Описание</th>
+                                                <th scope="col">Статус</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for department in form.departments %}
+                                                <tr department-id="{{ department.id }}">
+                                                    <td style="text-align: center"><input class="form-check-input"
+                                                                                          type="checkbox"></td>
+                                                    <td>{{ department.name }}</td>
+                                                    <td>{{ department.descr }}</td>
+                                                    <td>Активист</td>
+                                                    <td>
+                                                        <a href="{% url 'department_detail' department.id %}"
+                                                           class="btn btn-sm btn-primary mr-2">Подробнее</a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="id-events-cart" class="mb-3">
+                            <label class="form-label">Мероприятия</label>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col" style="width: 3%"></th>
+                                                <th scope="col">Название</th>
+                                                <th scope="col">Описание</th>
+                                                <th scope="col">Статус</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for event in form.events %}
+                                                <tr event-id="{{ event.id }}">
+                                                    <td style="text-align: center"><input class="form-check-input"
+                                                                                          type="checkbox"></td>
+                                                    <td>{{ event.name }}</td>
+                                                    <td>{{ event.descr }}</td>
+                                                    <td>
+                                                        <select class="form-select" aria-label="Default select example">
+                                                            <option value="listener">Слушатель</option>
+                                                            <option value="teacher">Преподаватель</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url 'event_detail' event.id %}"
+                                                           class="btn btn-sm btn-primary mr-2">Подробнее</a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% bootstrap_field form.is_user %}
+                        <div class="text-right mt-5 d-flex justify-content-between">
+                            <div>
+                                <a href="{% url 'people_list' %}" class="btn btn-danger">Отмена</a>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary d-inline-block" id="id-person-save"
+                                        onclick="savePersonClick()">Сохранить
+                                </button>
+                                <div class="modal fade" id="id-create-user-modal" tabindex="-1"
+                                     aria-labelledby="saveModalLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="saveModalLabel">Вы уверены, что хотите
+                                                    сделать этого человека пользователем?</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                При выборе "Продолжить" данные о человеке сохранятся, также будет
+                                                сгенерирована пара логин-пароль. Эти данные позволят пользователю
+                                                авторизоваться в системе.<br>
+                                                Права нового пользователя определяются отделами, в которые он входит.
+                                                Права можно изменить, изменив список отделов.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Отмена
+                                                </button>
+                                                <button type="button" class="btn btn-primary d-inline-block"
+                                                        id="id-create-user" onclick="createUser()">Продолжить
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="id-logpass-modal" tabindex="-1"
+                                     aria-labelledby="saveModalLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="saveModalLabel">Логин, пароль нового
+                                                    пользователя</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Эти данные отображаются единожды. Передайте их пользователю по
+                                                защищенному каналу связи.<br>
+                                                После получения рекомендуется сменить пароль.<br>
+                                                Логин: login_data<br>
+                                                Пароль: 3ju3ghoign3po
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-primary d-inline-block" id="id-confirm">
+                                                    Подтвердить
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block additional_js %}
+    <script src="/static/people/create.js"></script>
+{% endblock %}
