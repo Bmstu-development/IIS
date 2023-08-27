@@ -1,5 +1,5 @@
 from django_tables2 import SingleTableView
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, CreateView
 
@@ -92,3 +92,24 @@ class PersonAddView(CreateView):
 
     def get_success_url(self):
         return reverse_lazy('person_detail', kwargs={'pk': self.object.id})
+
+
+def delete_person(request, pk):
+    try:
+        pn = models.Person.objects.get(id=pk)
+    except models.Person.DoesNotExist:
+        return HttpResponse(status=404)
+    user = request.user
+    try:
+        is_subordinate = pn.pk in models.Person.objects.get(user_instance=user).get_subordinates_pk_list()
+    except models.Person.DoesNotExist:
+        is_subordinate = False
+    is_crud_allowed = Department.CRUD in user.groups.all().values_list('name', flat=True)
+    is_allowed_to_delete = user.is_superuser or (not pn.is_user and is_crud_allowed) or is_subordinate
+    if is_allowed_to_delete:
+        if pn.is_user:
+            pn.user_instance.delete()
+            pn.save()
+        pn.delete()
+        return HttpResponseRedirect(reverse_lazy('people_list'))
+    return HttpResponse(status=404)

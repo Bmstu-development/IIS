@@ -190,6 +190,9 @@ class Person(models.Model):
         self.save()
         return password
 
+    # def make_user(self, login, password):
+    #     pass
+
     def delete_user(self):
         """
         Удаляет пользователя, связанного с персоной self

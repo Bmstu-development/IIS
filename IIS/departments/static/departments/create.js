@@ -1,7 +1,7 @@
 let current_req = null;
 
 // $('#id-save').click( function(e) {
-function saveClick() {
+function saveDepartmentClick() {
     // e.preventDefault();
 
     let activists = [];
@@ -10,7 +10,7 @@ function saveClick() {
             activists.push($(this).attr('person-id'));
         }
     });
-    console.log('eneterd')
+    console.log('entered')
 
     // current_req = $.ajax({
     //     url: window.location.href,
@@ -40,11 +40,13 @@ function saveClick() {
 }
 
 function validateClick() {
+    let invalid_fields_num = 0;
+
     let name_input = $('#id_name')[0];
     if (!name_input.value) {
         name_input.classList.add('is-invalid');
         $(".is-invalid:first").get(0).scrollIntoView();
-        return;
+        invalid_fields_num++;
     } else {
         name_input.classList.remove('is-invalid');
     }
@@ -52,9 +54,12 @@ function validateClick() {
     if (!descr_input.value) {
         descr_input.classList.add('is-invalid');
         $(".is-invalid:first").get(0).scrollIntoView();
-        return;
+        invalid_fields_num++;
     } else {
         descr_input.classList.remove('is-invalid');
     }
-    $('#id-save-modal').modal('show');
+
+    if (!invalid_fields_num) {
+        $('#id-save-modal').modal('show');
+    }
 }
